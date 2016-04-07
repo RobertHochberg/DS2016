@@ -14,7 +14,8 @@ class Tester{
 	public static void main(String args[]) throws IOException{
 		//Nim t = new Nim();
 		//TicTacToeGUI2 t = new TicTacToeGUI2();
-		TicTacToe t = new TicTacToe();
+		//TicTacToe t = new TicTacToe();
+		DotsAndBoxes t = new DotsAndBoxes();
 		t.playGame();
 
 		FileReader f = new FileReader("/usr/share/dict/words");
