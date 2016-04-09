@@ -41,7 +41,7 @@ abstract class AlternatingGame extends TurnTakingGame {
 	void getSmartComputerMove(){
 		Object board = getBoard();
 		Object[] children = getChildren(board);
-		Object newBoard = null;
+		Object newBoard = children[0];
 		
 		// Assume for now 2 players
 		int winner = 3 - whoseTurn;

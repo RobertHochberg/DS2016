@@ -9,7 +9,7 @@ import java.util.Scanner;
 class Nim extends AlternatingGame {
 	// board holds pile sizes in positions 1, 2, 3, ...
 	// board[0] will hold whose turn it is.
-	int[] board = {0, 8, 4, 3};
+	int[] board = {1, 9, 10, 11};
 	char STONE = '@';
 	int NUMPILES = 3;
 	Scanner scanner = new Scanner(System.in);
@@ -38,6 +38,7 @@ class Nim extends AlternatingGame {
 
 		// update whose turn it is
 		whoseTurn = 3 - whoseTurn;
+		board[0] = whoseTurn;
 	}
 
 
@@ -98,7 +99,7 @@ class Nim extends AlternatingGame {
 
 	@Override
 	void getComputerMove() {
-		getStupidComputerMove();		
+		getSmartComputerMove();		
 	}
 
 
@@ -118,8 +119,24 @@ class Nim extends AlternatingGame {
 
 
 	@Override
-	Object[] getChildren(Object board) {
-		int[][] rv = new int[];
+	Object[] getChildren(Object b) {
+		int[] parentBoard = (int[])b;
+		int childTurn = 3 - parentBoard[0];
+		
+		DSArrayList<int[]> children = new DSArrayList<int[]>();
+		for(int pile = 1; pile <= NUMPILES; pile++){
+			for(int newNum = 0; newNum < parentBoard[pile]; newNum++){
+				int[] child = new int[NUMPILES + 1];
+				// copy the board completely
+				for(int i = 0; i <= NUMPILES; i++)
+					child[i] = parentBoard[i];
+				child[0] = childTurn; // Change whose turn it is
+				// change the # of stones in the "move" pile
+				child[pile] = newNum;
+				children.add(child);
+			}
+		}
+		return children.toArray();
 	}
 
 }
