@@ -36,7 +36,7 @@ public class DSArrayList< J > {
 	 */
 	public J add(J thingToAdd){
 		if(size == jays.length){ // We need to re-size the array
-			System.out.println("Re-sizing " + size);
+			//System.out.println("Re-sizing " + size);
 			int currentLength = jays.length;
 			int newLength = 2 * currentLength;
 			J[] newJays = (J[])(new Object[newLength]);
@@ -48,7 +48,6 @@ public class DSArrayList< J > {
 			
 		jays[size] = thingToAdd;
 		size++;
-		
 		
 		return thingToAdd;
 	}
@@ -67,22 +66,43 @@ public class DSArrayList< J > {
 	 * 
 	 * @param idx The index of the item to change
 	 */
-	public void set(int idx, J newValue){}
+	public void set(int idx, J newValue){
+		jays[idx] = newValue;
+	}
 	
 	/**
 	 * Remove an item from the DSArrayList and close the gap
 	 * 
 	 * 
 	 */
-	public void remove(int idx){
+	public J remove(int idx){
+		J[] newJays = (J[])(new Object[size-1]);
+		// copy the old array into the new array
+		for(int i = 0; i < idx; i++){
+			newJays[i] = jays[i];
+		}
+		for(int i = idx+1; i < size; i++){
+			newJays[i-1] = jays[i];
+		}
+		J rv = jays[idx];
+		jays = newJays;
 		size--;
+		return rv;
 	}
 	
 	/**
 	 * Returns the last item in the DSArrayList and removes it
 	 */
-	public void pop(){
+	public J pop(){
+		J[] newJays = (J[])(new Object[size-1]);
+		// copy the old array into the new array
+		for(int i = 0; i < size-1; i++){
+			newJays[i] = jays[i];
+		}
+		J rv = jays[size-1];
+		jays = newJays;
 		size--;
+		return rv;
 	}
 	
 	public int getSize(){
@@ -95,6 +115,28 @@ public class DSArrayList< J > {
 	 * @param thingToAdd
 	 */
 	public void insert(J thingToAdd, int idx){
-		
+		J[] newJays = (J[])(new Object[size+1]);
+		// copy the old array into the new array
+		for(int i = 0; i < idx; i++){
+			newJays[i] = jays[i];
+		}
+		newJays[idx] = thingToAdd;
+		for(int i = idx; i < size; i++){
+			newJays[i+1] = jays[i];
+		}
+		jays = newJays;
+		size--;
+	}
+
+	public Object[] toArray() {
+		return jays;
+	}
+	
+	public String toString() {
+		String rv = "[";
+		for(J j: jays)
+			rv += j + ", ";
+		rv += "\b\b]";
+		return rv;
 	}
 }

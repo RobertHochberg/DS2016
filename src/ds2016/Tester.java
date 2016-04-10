@@ -18,7 +18,7 @@ class Tester{
 		DotsAndBoxes t = new DotsAndBoxes();
 		t.playGame();
 
-		FileReader f = new FileReader("/usr/share/dict/words");
+		/*FileReader f = new FileReader("/usr/share/dict/words");
 		BufferedReader reader = new BufferedReader(f);
 		String line;
 		
@@ -30,7 +30,29 @@ class Tester{
 			
 			
 		}
-		System.out.println("wordList has " + wordList.getSize() + " items");
-
+		System.out.println("wordList has " + wordList.getSize() + " items");*/
+		
+		/*DSArrayList l = new DSArrayList<Integer>();
+		l.add(0);
+		l.add(1);
+		l.add(2);
+		l.add(3);
+		l.add(4);
+		l.add(5);
+		l.add(6);
+		l.add(7);
+		l.add(8);
+		l.add(9);
+		System.out.println(l);
+		System.out.println("Removing " + l.remove(7)+ ":");
+		System.out.println(l);
+		System.out.println("Popping off " + l.pop() + ":");
+		System.out.println(l);
+		System.out.println("Setting 2 -> 10:");
+		l.set(2, 10);
+		System.out.println(l);
+		System.out.println("Inserting 100 @ 5:");
+		l.insert(100, 5);
+		System.out.println(l);*/
 	}
 }
