@@ -119,7 +119,7 @@ class Nim extends AlternatingGame {
 
 	@Override
 	Object[] getChildren(Object board) {
-		int[][] rv = new int[];
+		int[] rv = new int[];
 	}
 
 }

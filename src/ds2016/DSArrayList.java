@@ -75,14 +75,30 @@ public class DSArrayList< J > {
 	 * 
 	 */
 	public void remove(int idx){
+		J[] newJays = (J[])(new Object[jays.length]);
+		if(idx > 0 && idx < jays.length){
+			for(int i = 0; i < idx; i++){
+			if(i != idx){
+				newJays[i] = jays[i];
+				}
+			}	
+		}
+		jays = newJays;
 		size--;
-	}
-	
+	}	
 	/**
 	 * Returns the last item in the DSArrayList and removes it
+	 * @return 
 	 */
-	public void pop(){
+	public J pop(){
+		J lastItem = jays[jays.length];
+		J[] newJays = (J[])(new Object[jays.length]);
+		for(int i = 0; i < jays.length - 1; i++){
+			newJays[i] = jays[i];
+		}
+		jays = newJays;
 		size--;
+		return lastItem;
 	}
 	
 	public int getSize(){
@@ -95,6 +111,19 @@ public class DSArrayList< J > {
 	 * @param thingToAdd
 	 */
 	public void insert(J thingToAdd, int idx){
-		
+		if(idx > 0 && idx < jays.length){
+			int currentLength = jays.length;
+			int newLength = currentLength++;
+			J[] newJays = (J[])(new Object[newLength]);
+			for(int i = 0; i < newLength; i++){
+				if(idx != i){
+					newJays[i] = jays[i];
+				}
+				else{
+					newJays[i] = thingToAdd;
+				}
+			}
+			jays = newJays;
+		}
 	}
 }
