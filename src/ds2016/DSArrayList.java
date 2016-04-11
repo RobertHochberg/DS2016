@@ -7,6 +7,7 @@ package ds2016;
  * It's really just an array. But, we want to endow it with
  * extra functionality.
  *  
+ * Hello
  * @author DS Students, via homework assignments
  *
  */
