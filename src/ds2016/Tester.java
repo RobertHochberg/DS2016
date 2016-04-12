@@ -17,7 +17,7 @@ class Tester{
 		TicTacToe t = new TicTacToe();
 		t.playGame();
 
-		FileReader f = new FileReader("/usr/share/dict/words");
+		FileReader f = new FileReader("C:/Users/User/Downloads/words/words.txt");
 		BufferedReader reader = new BufferedReader(f);
 		String line;
 		
@@ -30,6 +30,11 @@ class Tester{
 			
 		}
 		System.out.println("wordList has " + wordList.getSize() + " items");
+      //wordList.pop();
+      //wordList.remove(2);
+      //wordList.insert("hello", 2);
+      System.out.println("wordList has " + wordList.getSize() + " items");
+      
 
 	}
 }

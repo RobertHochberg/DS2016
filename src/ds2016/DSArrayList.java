@@ -47,7 +47,7 @@ public class DSArrayList< J > {
 		}
 			
 		jays[size] = thingToAdd;
-		size++;
+      size++;
 		
 		
 		return thingToAdd;
@@ -75,15 +75,45 @@ public class DSArrayList< J > {
 	 * 
 	 */
 	public void remove(int idx){
-		size--;
+		if(size == jays.length){ // We need to re-size the array
+			System.out.println("Re-sizing " + size);
+			int currentLength = jays.length;
+			int newLength = currentLength - 1;
+			J[] newJays = (J[])(new Object[newLength]);
+         jays[idx] = null;
+			// copy the old array into the new array
+				for(int i = 0; i < jays.length; i++)
+            {
+            if(i < idx)
+               newJays[i] = jays[i];
+            else
+               newJays[i] = jays[i+1];
+            }
+			jays = newJays;
+         }
+         size--;
+		
 	}
 	
 	/**
 	 * Returns the last item in the DSArrayList and removes it
 	 */
 	public void pop(){
-		size--;
-	}
+	if(size == jays.length){ // We need to re-size the array
+			System.out.println("Re-sizing " + size);
+			int currentLength = jays.length;
+			int newLength = currentLength - 1;
+			J[] newJays = (J[])(new Object[newLength]);
+         jays[newLength] = null;
+			// copy the old array into the new array
+			for(int i = 0; i < newLength; i++)
+         {
+            newJays[i] = jays[i];
+         }
+			jays = newJays;
+         }
+         size--;
+		}
 	
 	public int getSize(){
 		return size;
@@ -95,6 +125,24 @@ public class DSArrayList< J > {
 	 * @param thingToAdd
 	 */
 	public void insert(J thingToAdd, int idx){
-		
-	}
-}
+      if(size == jays.length){ // We need to re-size the array
+			System.out.println("Re-sizing " + size);
+			int currentLength = jays.length;
+			int newLength = 2 * currentLength;
+			J[] newJays = (J[])(new Object[newLength]);
+			// copy the old array into the new array
+			for(int i = 0; i < currentLength; i++)
+         {
+            if(i < idx)
+				   newJays[i] = jays[i];
+            else if(i == idx)
+               newJays[i] = thingToAdd;
+            else
+               newJays[i] = jays[i-1];
+         }
+			jays = newJays;
+         }
+         size++;
+		}
+   }
+
