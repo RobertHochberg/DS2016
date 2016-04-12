@@ -15,12 +15,13 @@ public class DSArrayList< J > {
 	 * The backing array. Stores the (references to) objects
 	 */
 	private J[] jays;
-	
+
 	/**
 	 * Number of elements in the DSArrayList, and the location
 	 * where the next entry should go
 	 */
 	private int size;
+	
 	/**
 	 * Constructor
 	 */
@@ -28,7 +29,7 @@ public class DSArrayList< J > {
 		jays = (J[])(new Object[10]);
 		size = 0;
 	}
-	
+
 	/**
 	 * Simply insert something at the end of the DSArrayList
 	 * 
@@ -51,7 +52,7 @@ public class DSArrayList< J > {
 		
 		return thingToAdd;
 	}
-	
+
 	/**
 	 * Returns a specific item from the array
 	 * 
@@ -60,7 +61,7 @@ public class DSArrayList< J > {
 	public J get(int idx){
 		return jays[idx];
 	}
-	
+
 	/**
 	 * Set an item to a particular value
 	 * 
@@ -72,8 +73,6 @@ public class DSArrayList< J > {
 	
 	/**
 	 * Remove an item from the DSArrayList and close the gap
-	 * 
-	 * 
 	 */
 	public J remove(int idx){
 		J[] newJays = (J[])(new Object[size-1]);
@@ -89,7 +88,7 @@ public class DSArrayList< J > {
 		size--;
 		return rv;
 	}
-	
+
 	/**
 	 * Returns the last item in the DSArrayList and removes it
 	 */
