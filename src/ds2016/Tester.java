@@ -18,6 +18,8 @@ class Tester{
 		DotsAndBoxes t = new DotsAndBoxes();
 		t.playGame();
 
+		//System.out.println("# game plays is " + t.buildTree(t.getBoard()).numLeaves());
+
 		/*FileReader f = new FileReader("/usr/share/dict/words");
 		BufferedReader reader = new BufferedReader(f);
 		String line;
@@ -32,7 +34,7 @@ class Tester{
 		}
 		System.out.println("wordList has " + wordList.getSize() + " items");*/
 		
-		/*DSArrayList l = new DSArrayList<Integer>();
+		/*DSArrayList<Integer> l = new DSArrayList<Integer>();
 		l.add(0);
 		l.add(1);
 		l.add(2);

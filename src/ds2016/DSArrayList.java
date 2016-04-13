@@ -3,7 +3,7 @@ package ds2016;
 /**
  * Implementation of ArrayList
  * 
- * Resizable array of objects. Generic.
+ * Re-sizable array of objects. Generic.
  * It's really just an array. But, we want to endow it with
  * extra functionality.
  *  
@@ -15,13 +15,13 @@ public class DSArrayList< J > {
 	 * The backing array. Stores the (references to) objects
 	 */
 	private J[] jays;
-
+	
 	/**
 	 * Number of elements in the DSArrayList, and the location
 	 * where the next entry should go
 	 */
 	private int size;
-	
+
 	/**
 	 * Constructor
 	 */
@@ -29,7 +29,7 @@ public class DSArrayList< J > {
 		jays = (J[])(new Object[10]);
 		size = 0;
 	}
-
+	
 	/**
 	 * Simply insert something at the end of the DSArrayList
 	 * 
@@ -52,7 +52,7 @@ public class DSArrayList< J > {
 		
 		return thingToAdd;
 	}
-
+	
 	/**
 	 * Returns a specific item from the array
 	 * 
@@ -61,7 +61,7 @@ public class DSArrayList< J > {
 	public J get(int idx){
 		return jays[idx];
 	}
-
+	
 	/**
 	 * Set an item to a particular value
 	 * 
@@ -88,7 +88,7 @@ public class DSArrayList< J > {
 		size--;
 		return rv;
 	}
-
+	
 	/**
 	 * Returns the last item in the DSArrayList and removes it
 	 */
@@ -109,7 +109,7 @@ public class DSArrayList< J > {
 	}
 	
 	/**
-	 * Insert an item into the Arraylist at the specified location
+	 * Insert an item into the ArrayList at the specified location
 	 * @param idx
 	 * @param thingToAdd
 	 */
@@ -126,16 +126,23 @@ public class DSArrayList< J > {
 		jays = newJays;
 		size--;
 	}
-
-	public Object[] toArray() {
-		return jays;
-	}
 	
 	public String toString() {
 		String rv = "[";
 		for(J j: jays)
 			rv += j + ", ";
 		rv += "\b\b]";
+		return rv;
+	}
+	
+	/**
+	 * Return an array holding copies of this DSArrayList's objects
+	 */
+	public J[] toArray(){
+		J[] rv = (J[])(new Object[size]);
+		// copy into this new array
+		for(int i = 0; i < size; i++)
+			rv[i] = jays[i];
 		return rv;
 	}
 }
