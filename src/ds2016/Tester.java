@@ -19,6 +19,7 @@ class Tester{
 		t.playGame();
 
 		//System.out.println("# game plays is " + t.buildTree(t.getBoard()).numLeaves());
+		//System.out.println("# game moves is " + t.buildTree(t.getBoard()).numNodes());
 
 		/*FileReader f = new FileReader("/usr/share/dict/words");
 		BufferedReader reader = new BufferedReader(f);
