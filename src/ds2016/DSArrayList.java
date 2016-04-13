@@ -1,4 +1,4 @@
-package ds2016;
+package src.ds2016;
 
 
 /**
@@ -60,28 +60,32 @@ public class DSArrayList< J > {
 	 * 
 	 */
 	public void remove(int idx){
-		for (int i = idx; i < this.jays.length - 1; i++){
-			this.jays[i] = this.jays[1 + i];
+		int i = 0;
+		for (i = idx; i < this.jays.length; i++){
+			if (this.jays[i += 1] == null){
+				this.jays[i] = null;
+			}
+			else{
+			this.jays[i] = this.jays[i += 1];
+			}
 		}
-		this.jays [this.jays.length - 1] = null;
 	}
 
 	/**
-	 * Returns the last item in the DSArrayList and removes it
-	 */
+	 * Removes the last item in DSArray list
+	 * Returns the last item*/
 	public J pop(){
-		J rval = null;
-		for (int i = 0; i < this.jays.length - 1; i++){
-			if (this.jays[i + 1] == null) {
-				rval = this.jays[i];
-				this.jays[i] = null;
-				break;
-				}
+	int x = this.jays.length - 1;
+    J y = this.jays[x];
+	remove(x);
+	return y;
+	}
+	
+	public void insert(int idx, J var){
+		int i = 0;
+		for (i = idx; i < this.jays.length; i ++){
+			this.jays[i += 1] = this.jays[i];
 		}
-		if (rval == null) {
-			rval = this.jays [this.jays.length - 1];
-			this.jays [this.jays.length - 1] = null;
-		}
-		return rval;
+		this.jays[idx] = var;
 	}
 }
