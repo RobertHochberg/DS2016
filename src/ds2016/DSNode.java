@@ -52,4 +52,21 @@ class DSNode< E >{
 	public void setWinner(int w){
 		this.winner = w;
 	}
+
+	public int numLeaves()
+	{
+		int rv = 0;
+
+		if(this.numChildren == 0)
+			rv = 1;
+		else
+		{
+			for(int i = 0; i < this.numChildren; i++)
+			{
+				rv += children.get(i).numLeaves();
+			}
+		}
+
+		return rv;
+	} 
 }

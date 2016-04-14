@@ -97,4 +97,15 @@ public class DSArrayList< J > {
 	public void insert(J thingToAdd, int idx){
 		
 	}
+	
+	/**
+	 * Return an array holding copies of this DSArrayList's objects
+	 */
+	public J[] toArray(){
+		J[] rv = (J[])(new Object[size]);
+		// copy into this new array
+		for(int i = 0; i < size; i++)
+			rv[i] = jays[i];
+		return rv;
+	}
 }
