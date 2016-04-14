@@ -125,7 +125,6 @@ public class DSArrayList< J > {
 	 * @param thingToAdd
 	 */
 	public void insert(J thingToAdd, int idx){
-<<<<<<< HEAD
       if(size == jays.length){ // We need to re-size the array
 			System.out.println("Re-sizing " + size);
 			int currentLength = jays.length;
@@ -145,11 +144,6 @@ public class DSArrayList< J > {
          }
          size++;
 		}
-   }
-
-=======
-		
-	}
 	
 	/**
 	 * Return an array holding copies of this DSArrayList's objects
@@ -162,4 +156,3 @@ public class DSArrayList< J > {
 		return rv;
 	}
 }
->>>>>>> refs/remotes/origin/master
