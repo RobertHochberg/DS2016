@@ -9,8 +9,8 @@ import java.util.Scanner;
 public class DotsAndBoxes extends SemiAlternatingGame {
 
 	char[][] board;
-	int boardSize = 3;  //(boardSize + 1) / 2 = the number of dots on each row and column\
-	byte difficulty = 1; // 1 = getDumbComputerMove(), 2 = getSmartComputerMove()
+	int boardSize = 5;  //(boardSize + 1) / 2 = the number of dots on each row and column\
+	byte difficulty = 2; // 1 = getDumbComputerMove(), 2 = getSmartComputerMove()
 	Scanner scan = new Scanner(System.in);
 
 	public DotsAndBoxes() {
@@ -72,9 +72,27 @@ public class DotsAndBoxes extends SemiAlternatingGame {
 	}
 
 	@Override
-	Object[] getChildren(Object board) {
-		// TODO Auto-generated method stub
-		return null;
+	Object[] getChildren(Object localBoard) {
+		char[][] lb = (char[][]) localBoard;
+		DSArrayList<char[][]> l = new DSArrayList<char[][]>();
+		for(int row = 0; row < boardSize; row++){
+			for(int col = 0; col < boardSize; col++){
+				if(lb[row][col] == ' '){
+					char[][] b = new char[boardSize][boardSize];
+					for(int r = 0; r < boardSize; r++)
+						for(int c = 0; c < boardSize; c++)
+							b[r][c] = lb[r][c];
+					
+					if(row % 2 == 0)
+						b[row][col] = '-';
+					else
+						b[row][col] = '|';
+					l.add(b);
+				}
+			}
+		}
+		System.out.println(l);
+		return l.toArray();
 	}
 
 	@Override
@@ -110,22 +128,24 @@ public class DotsAndBoxes extends SemiAlternatingGame {
 
 	@Override
 	void getHumanMove() {
-		int r, c;
-		System.out.print("Please enter a row to make a move at: ");
-		r = scan.nextInt();
-		System.out.print("Please enter a column to make a move at: ");
-		c = scan.nextInt();
-		while(board[--r][--c] != ' '){
-			System.out.println("That  move was invalid, please try again.  The numbers above and to the left of the board correspond to the proper values.");
+		do{
+			int r, c;
 			System.out.print("Please enter a row to make a move at: ");
 			r = scan.nextInt();
 			System.out.print("Please enter a column to make a move at: ");
 			c = scan.nextInt();
-		}
-		if(r % 2 == 0)
-			board[r][c] = '-';
-		else
-			board[r][c] = '|';
+			while(board[--r][--c] != ' '){
+				System.out.println("That  move was invalid, please try again.  The numbers above and to the left of the board correspond to the proper values.");
+				System.out.print("Please enter a row to make a move at: ");
+				r = scan.nextInt();
+				System.out.print("Please enter a column to make a move at: ");
+				c = scan.nextInt();
+			}
+			if(r % 2 == 0)
+				board[r][c] = '-';
+			else
+				board[r][c] = '|';
+		}while(playAgain(board, whoseTurn) && !isGameOver());
 		whoseTurn = 3 - whoseTurn;
 	}
 
@@ -136,7 +156,7 @@ public class DotsAndBoxes extends SemiAlternatingGame {
 				getDumbComputerMove();
 			else
 				getSmartComputerMove();
-		}while(playAgain(board, whoseTurn));
+		}while(playAgain(board, whoseTurn) && !isGameOver());
 		whoseTurn = 3 - whoseTurn;
 	}
 	
@@ -146,16 +166,27 @@ public class DotsAndBoxes extends SemiAlternatingGame {
 	 */
 	@Override
 	public boolean playAgain(Object localBoard, int player) {
-		char[][] b = (char[][]) localBoard;
+		boolean rv = false;
+		
+		char[][] lb = (char[][]) localBoard;
+		char[][] b = new char[boardSize][boardSize];
+		for(int r = 0; r < boardSize; r++)
+			for(int c = 0; c < boardSize; c++)
+				b[r][c] = lb[r][c];
+		
 		updateBoard();
 		for(int row = 0; row < boardSize; row++){
 			for(int col = 0; col < boardSize; col++){
-				if(board[row][col] != b[row][col]){
-					return true;
+				if(b[row][col] == '0' && (board[row][col] == '1' || board[row][col] == '2')){
+					rv = true;
 				}
 			}
 		}
-		return false;
+		
+		if(rv)
+			drawBoard();
+		
+		return rv;
 	}
 	
 	/*
