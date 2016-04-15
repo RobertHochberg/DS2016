@@ -68,5 +68,18 @@ class DSNode< E >{
 		}
 
 		return rv;
+	}
+	public int numNodes()
+	{
+		int rv = 0;
+		{
+			for(int i = 0; i < this.numChildren; i++)
+			{
+				rv += this.numChildren; 
+				rv += children.get(i).numNodes();
+			}
+		}
+
+		return rv;
 	} 
 }
