@@ -54,9 +54,9 @@ public class TicTacToeGUI2 extends TicTacToe {
 
 		// Read the board and token images
 		try {
-			boardImage = ImageIO.read(new File("/home/hochberg/Server/workspace/DS2016/TTTboard.png"));
-			xImage     = ImageIO.read(new File("/home/hochberg/Server/workspace/DS2016/xImage.png"));
-			oImage     = ImageIO.read(new File("/home/hochberg/Server/workspace/DS2016/oImage.png"));
+			boardImage = ImageIO.read(new File("/Users/wpa/Dropbox/DiscreteStructures/workspace/Github/DS2016/TTTboard.png"));
+			xImage     = ImageIO.read(new File("/Users/wpa/Dropbox/DiscreteStructures/workspace/Github/DS2016/xImage.png"));
+			oImage     = ImageIO.read(new File("/Users/wpa/Dropbox/DiscreteStructures/workspace/Github/DS2016/oImage.png"));
 		} catch (IOException e) {
 			System.err.println("Could not open files");
 		}

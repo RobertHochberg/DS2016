@@ -1,5 +1,6 @@
 package ds2016;
 
+
 /**
  * Implementation of ArrayList
  * 
@@ -15,74 +16,74 @@ public class DSArrayList< J > {
 	 * The backing array. Stores the (references to) objects
 	 */
 	private J[] jays;
-	
 	/**
-	 * Number of elements in the DSArrayList, and the location
-	 * where the next entry should go
+	 * Number of elements in the DSArrayList, and the location where the next
+	 * entry should go
 	 */
 	private int size;
+
 	/**
 	 * Constructor
 	 */
-	public DSArrayList(){
-		jays = (J[])(new Object[10]);
+	public DSArrayList() {
+		jays = (J[]) (new Object[size]);
 		size = 0;
 	}
-	
+
 	/**
 	 * Simply insert something at the end of the DSArrayList
-	 * 
-	 * @return The item added
 	 */
-	public J add(J thingToAdd){
-		if(size == jays.length){ // We need to re-size the array
-			System.out.println("Re-sizing " + size);
-			int currentLength = jays.length;
-			int newLength = 2 * currentLength;
-			J[] newJays = (J[])(new Object[newLength]);
-			// copy the old array into the new array
-			for(int i = 0; i < currentLength; i++)
-				newJays[i] = jays[i];
-			jays = newJays;
+	public void add(J thingToAdd){
+		for (int i = 0; i < this.jays.length; i++){
+			if (this.jays[i] == null) {
+				this.jays[i] = thingToAdd;
+				break;
+			}
 		}
-			
-		jays[size] = thingToAdd;
-		size++;
-		
-		
-		return thingToAdd;
+
 	}
-	
+
 	/**
 	 * Returns a specific item from the array
 	 * 
 	 * @param idx The index of the item to return
 	 */
 	public J get(int idx){
-		return jays[idx];
+		return this.jays[idx];
 	}
-	
+
 	/**
 	 * Set an item to a particular value
 	 * 
 	 * @param idx The index of the item to change
 	 */
 	public void set(int idx, J newValue){}
-	
+
 	/**
 	 * Remove an item from the DSArrayList and close the gap
 	 * 
 	 * 
 	 */
 	public void remove(int idx){
-		size--;
+		for (int i = idx; i < this.jays.length - 1; i++){
+			this.jays[i] = this.jays[1 + i];
+		}
+		this.jays [this.jays.length - 1] = null;
 	}
-	
+
 	/**
 	 * Returns the last item in the DSArrayList and removes it
+	 * @return 
 	 */
-	public void pop(){
+	public J pop(){
+		J lastItem = jays[jays.length];
+		J[] newJays = (J[])(new Object[jays.length]);
+		for(int i = 0; i < jays.length - 1; i++){
+			newJays[i] = jays[i];
+		}
+		jays = newJays;
 		size--;
+		return lastItem;
 	}
 	
 	public int getSize(){
@@ -94,8 +95,20 @@ public class DSArrayList< J > {
 	 * @param idx
 	 * @param thingToAdd
 	 */
-	public void insert(J thingToAdd, int idx){
-		
+	public J insert(J thingToAdd, int idx){
+		J rval = null;
+		for (int i = 0; i < this.jays.length - 1; i++){
+			if (this.jays[i + 1] == null) {
+				rval = this.jays[i];
+				this.jays[i] = null;
+				break;
+				}
+		}
+		if (rval == null) {
+			rval = this.jays [this.jays.length - 1];
+			this.jays [this.jays.length - 1] = null;
+		}
+		return rval;
 	}
 	
 	/**

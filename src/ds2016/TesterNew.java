@@ -9,28 +9,24 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-class Tester{
+class TesterNew {
 
-	public static void main(String args[]) throws IOException{
-
-//		Nim t = new Nim();
-//		System.out.println("# game plays is " + t.buildTree(t.getBoard()).numLeaves());
-//		//TicTacToeGUI2 t = new TicTacToeGUI2();
-//		//TicTacToe t = new TicTacToe();
-//
+	public static void main(String args[]) throws IOException {
+		// Nim t = new Nim();
+		// TicTacToeGUI2 t = new TicTacToeGUI2();
+//		TicTacToe t = new TicTacToe();
 //		t.playGame();
 
 		FileReader f = new FileReader("/usr/share/dict/words");
 		BufferedReader reader = new BufferedReader(f);
 		String line;
-		
-		DSArrayListTest <String> wordList = new DSArrayListTest<String>();
+
+		DSArrayListTest<String> wordList = new DSArrayListTest<String>();
 		while ((line = reader.readLine()) != null) {
-			line = line.replaceAll("[\\?,~<01234567890()':;.!_-]", "");	
-			
+			line = line.replaceAll("[\\?,~<01234567890()':;.!_-]", "");
+
 			wordList.add(line);
-			
-			
+
 		}
 		System.out.println("wordList has " + wordList.getSize() + " items");
 
