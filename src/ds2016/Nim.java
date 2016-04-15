@@ -9,9 +9,9 @@ import java.util.Scanner;
 class Nim extends AlternatingGame {
 	// board holds pile sizes in positions 1, 2, 3, ...
 	// board[0] will hold whose turn it is.
-	int[] board = {1, 9, 10, 11};
+	int[] board = {1, 2,2,2,2,2};
 	char STONE = '@';
-	int NUMPILES = 3;
+	int NUMPILES = 5;
 	Scanner scanner = new Scanner(System.in);
 
 
