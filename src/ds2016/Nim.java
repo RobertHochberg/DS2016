@@ -9,9 +9,13 @@ import java.util.Scanner;
 class Nim extends AlternatingGame {
 	// board holds pile sizes in positions 1, 2, 3, ...
 	// board[0] will hold whose turn it is.
+<<<<<<< HEAD
 	int[] board = {1, 9, 10, 11};
+=======
+	int[] board = {1, 2,2,2,2,2};
+>>>>>>> master
 	char STONE = '@';
-	int NUMPILES = 3;
+	int NUMPILES = 5;
 	Scanner scanner = new Scanner(System.in);
 
 
@@ -120,9 +124,12 @@ class Nim extends AlternatingGame {
 
 	@Override
 <<<<<<< HEAD
+<<<<<<< HEAD
 	Object[] getChildren(Object board) {
 		int[] rv = new int[];
 =======
+=======
+>>>>>>> master
 	Object[] getChildren(Object b) {
 		int[] parentBoard = (int[])b;
 		int childTurn = 3 - parentBoard[0];
@@ -141,6 +148,9 @@ class Nim extends AlternatingGame {
 			}
 		}
 		return children.toArray();
+<<<<<<< HEAD
+>>>>>>> master
+=======
 >>>>>>> master
 	}
 

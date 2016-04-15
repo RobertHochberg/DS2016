@@ -12,10 +12,17 @@ import java.io.IOException;
 class Tester{
 
 	public static void main(String args[]) throws IOException{
+<<<<<<< HEAD
 //		Nim t = new Nim();
 //		TicTacToeGUI2 t = new TicTacToeGUI2();
 		TicTacToeGUI t = new TicTacToeGUI();
 //		TicTacToe t = new TicTacToe();
+=======
+		Nim t = new Nim();
+		System.out.println("# game plays is " + t.buildTree(t.getBoard()).numLeaves());
+		//TicTacToeGUI2 t = new TicTacToeGUI2();
+		//TicTacToe t = new TicTacToe();
+>>>>>>> master
 		t.playGame();
 
 		FileReader f = new FileReader("/usr/share/dict/words");
