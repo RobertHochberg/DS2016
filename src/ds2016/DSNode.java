@@ -68,5 +68,11 @@ class DSNode< E >{
 		}
 
 		return rv;
-	} 
+	}
+	
+	public int numNodes()
+	{
+		return numChildren + 1;
+	
+	}
 }

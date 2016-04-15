@@ -16,13 +16,18 @@ public class DSArrayList< J > {
 	 * The backing array. Stores the (references to) objects
 	 */
 	private J[] jays;
-
+	/**
+	 * Number of elements in the DSArrayList, and the location where the next
+	 * entry should go
+	 */
+	private int size;
 
 	/**
 	 * Constructor
 	 */
-	public DSArrayList(){
-		jays = (J[])(new Object[10]);
+	public DSArrayList() {
+		jays = (J[]) (new Object[size]);
+		size = 0;
 	}
 
 	/**
@@ -60,32 +65,17 @@ public class DSArrayList< J > {
 	 * 
 	 */
 	public void remove(int idx){
-<<<<<<< HEAD
-		J[] newJays = (J[])(new Object[jays.length]);
-		if(idx > 0 && idx < jays.length){
-			for(int i = 0; i < idx; i++){
-			if(i != idx){
-				newJays[i] = jays[i];
-				}
-			}	
-		}
-		jays = newJays;
-		size--;
-	}	
-=======
 		for (int i = idx; i < this.jays.length - 1; i++){
 			this.jays[i] = this.jays[1 + i];
 		}
 		this.jays [this.jays.length - 1] = null;
 	}
 
->>>>>>> master
 	/**
 	 * Returns the last item in the DSArrayList and removes it
 	 * @return 
 	 */
 	public J pop(){
-<<<<<<< HEAD
 		J lastItem = jays[jays.length];
 		J[] newJays = (J[])(new Object[jays.length]);
 		for(int i = 0; i < jays.length - 1; i++){
@@ -105,22 +95,7 @@ public class DSArrayList< J > {
 	 * @param idx
 	 * @param thingToAdd
 	 */
-	public void insert(J thingToAdd, int idx){
-		if(idx > 0 && idx < jays.length){
-			int currentLength = jays.length;
-			int newLength = currentLength++;
-			J[] newJays = (J[])(new Object[newLength]);
-			for(int i = 0; i < newLength; i++){
-				if(idx != i){
-					newJays[i] = jays[i];
-				}
-				else{
-					newJays[i] = thingToAdd;
-				}
-			}
-			jays = newJays;
-		}
-=======
+	public J insert(J thingToAdd, int idx){
 		J rval = null;
 		for (int i = 0; i < this.jays.length - 1; i++){
 			if (this.jays[i + 1] == null) {
@@ -134,7 +109,6 @@ public class DSArrayList< J > {
 			this.jays [this.jays.length - 1] = null;
 		}
 		return rval;
->>>>>>> master
 	}
 	
 	/**
