@@ -81,8 +81,9 @@ public class DSArrayList< J > {
 	/**
 	 * Returns the last item in the DSArrayList and removes it
 	 */
-	public void pop(){
+	public J pop(){
 		size--;
+		return jays[0];
 	}
 	
 	public int getSize(){
