@@ -52,4 +52,11 @@ class DSNode< E >{
 	public void setWinner(int w){
 		this.winner = w;
 	}
+	
+	public int numNodes(){
+		int NumNodes = 1+numChildren;
+		for (int i =0; i < numChildren; i++));
+		NumNodes = NumNodes + children[i].NumNodes();
+		return NumNodes;
+	}
 }
