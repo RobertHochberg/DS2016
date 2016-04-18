@@ -13,33 +13,20 @@ class Tester{
 
 	public static void main(String args[]) throws IOException{
 
-<<<<<<< HEAD
-//		Nim t = new Nim();
-//		System.out.println("# game plays is " + t.buildTree(t.getBoard()).numLeaves());
-//		//TicTacToeGUI2 t = new TicTacToeGUI2();
-//		//TicTacToe t = new TicTacToe();
-//
-//		t.playGame();
-=======
 		arrayTest();
 
-		Nim t = new Nim();
-		System.out.println("# game plays is " + t.buildTree(t.getBoard()).numLeaves());
+//		Nim t = new Nim();
+//		System.out.println("# game plays is " + t.buildTree(t.getBoard()).numLeaves());
 		//TicTacToeGUI2 t = new TicTacToeGUI2();
 		//TicTacToe t = new TicTacToe();
-		t.playGame();
->>>>>>> master
+//		t.playGame();
 
 		FileReader f = new FileReader("/usr/share/dict/words");
 		BufferedReader reader = new BufferedReader(f);
 		String line;
-<<<<<<< HEAD
-		
-		DSArrayListTest <String> wordList = new DSArrayListTest<String>();
-=======
+
 
 		DSArrayList <String> wordList = new DSArrayList<String>();
->>>>>>> master
 		while ((line = reader.readLine()) != null) {
 			line = line.replaceAll("[\\?,~<01234567890()':;.!_-]", "");	
 

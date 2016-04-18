@@ -26,8 +26,8 @@ public class DSArrayList< J > {
 	 * Constructor
 	 */
 	public DSArrayList() {
+		size = 10;
 		jays = (J[]) (new Object[size]);
-		size = 0;
 	}
 
 	/**
@@ -76,13 +76,13 @@ public class DSArrayList< J > {
 	 * @return 
 	 */
 	public J pop(){
-		J lastItem = jays[jays.length];
+		J lastItem = jays[jays.length - 1];
 		J[] newJays = (J[])(new Object[jays.length]);
 		for(int i = 0; i < jays.length - 1; i++){
 			newJays[i] = jays[i];
 		}
-		jays = newJays;
 		size--;
+		jays = newJays;
 		return lastItem;
 
 	}
