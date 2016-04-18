@@ -10,69 +10,76 @@
 
 package ds2016;
 
-class DSNode< E >{
+class DSNode<E> {
 	// The winner of the tree that has this node as root
-	private int winner;	// 0 = tie, 1, 2, 3, ... = the wining player		
-	private E   board;
+	private int winner; // 0 = tie, 1, 2, 3, ... = the wining player
+	private E board;
 	private DSArrayList<DSNode> children = new DSArrayList<DSNode>();
-	private int      numChildren = 0;
+	private int numChildren = 0;
 
-	public void setBoard(E b){
+	public void setBoard(E b) {
 		board = b;
 	}
 
-	public DSArrayList<DSNode> getChildren(){
+	public DSArrayList<DSNode> getChildren() {
 		return children;
 	}
 
-	public void setChildren(DSArrayList<DSNode> ch){
+	public void setChildren(DSArrayList<DSNode> ch) {
 		children = ch;
 	}
 
-	public void addChild(DSNode ch){
+	public void addChild(DSNode ch) {
 		children.add(ch);
 		numChildren++;
 	}
 
 	// a getter for the numChildren variable
-	public int getNumChildren(){
+	public int getNumChildren() {
 		return numChildren;
 	}
 
 	// a getter for the board
-	public E getBoard(){
+	public E getBoard() {
 		return board;
 	}
 
-	public int getWinner(){
+	public int getWinner() {
 		return winner;
 	}
 
-
-	public void setWinner(int w){
+	public void setWinner(int w) {
 		this.winner = w;
 	}
 
-	public int numLeaves()
-	{
+	public int numLeaves() {
 		int rv = 0;
 
-		if(this.numChildren == 0)
+		if (this.numChildren == 0)
 			rv = 1;
-		else
-		{
-			for(int i = 0; i < this.numChildren; i++)
-			{
+		else {
+			for (int i = 0; i < this.numChildren; i++) {
 				rv += children.get(i).numLeaves();
 			}
 		}
 
 		return rv;
 	}
-	
-	public int numNodes()
-	{
-		return numChildren + 1;
-	
+
+	public int numNodes() {
+		int rv = 0;
+
+		if (this.numChildren == 0)
+			rv = 1;
+		else {
+			for (int i = 0; i < this.numChildren; i++) {
+				rv += children.get(i).numNodes() + 1;
+			}
+		}
+		// add "+ 1" to include the parent node of the leaves
+		// This will recursively add up the nodes and their parents
+		// as it goes through the tree
+		return rv;
+
 	}
 }
