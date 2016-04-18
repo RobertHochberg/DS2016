@@ -84,6 +84,7 @@ public class DSArrayList< J > {
 		jays = newJays;
 		size--;
 		return lastItem;
+
 	}
 	
 	public int getSize(){
