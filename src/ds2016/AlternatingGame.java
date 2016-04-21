@@ -4,7 +4,7 @@
  * Defines functionality for games where two players take turns
  */
 
-package ds2016;
+package src.ds2016;
 
 abstract class AlternatingGame extends TurnTakingGame {
 	int whoseTurn = 1;		// The player whose turn it is.

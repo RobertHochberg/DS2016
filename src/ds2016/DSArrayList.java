@@ -1,4 +1,4 @@
-package ds2016;
+package src.ds2016;
 
 /**
  * Implementation of ArrayList

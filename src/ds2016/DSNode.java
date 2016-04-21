@@ -8,7 +8,7 @@
  * Author DS2016 
  */
 
-package ds2016;
+package src.ds2016;
 
 class DSNode< E >{
 	// The winner of the tree that has this node as root

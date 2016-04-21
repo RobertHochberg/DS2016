@@ -2,7 +2,7 @@
  * Tic Tac Toe game. Inteded to be two-player
  */
 
-package ds2016;
+package src.ds2016;
 
 import java.util.Scanner;
 

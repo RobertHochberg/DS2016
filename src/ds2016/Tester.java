@@ -3,7 +3,7 @@
  * Tester class for our games
  */
 
-package ds2016;
+package src.ds2016;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;

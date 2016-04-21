@@ -1,4 +1,4 @@
-package ds2016;
+package src.ds2016;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;

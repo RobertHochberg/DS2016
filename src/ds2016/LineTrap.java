@@ -3,7 +3,7 @@
  * rowLocation++ moves up/down; colLocation moves left/right
  */
 
-package ds2016;
+package src.ds2016;
 
 import java.util.Scanner;
 
@@ -16,7 +16,7 @@ class LineTrap extends AlternatingGame{
 	char VERTICALLINE = '\u2502';
 	char HORIZONTALLINE = '\u2500';
 	char MARKER = '@';
-	char EMPTYSPACE = '=';
+	char EMPTYSPACE = ' ';
 	// int numMoves = 0; // if time, include for stats
 
 	Scanner scanner;

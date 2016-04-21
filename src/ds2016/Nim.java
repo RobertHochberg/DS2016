@@ -2,7 +2,7 @@
  * Game of Nim
  */
 
-package ds2016;
+package src.ds2016;
 
 import java.util.Scanner;
 
