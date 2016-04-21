@@ -4,7 +4,7 @@
 
 package ds2016;
 
-class Tester{
+class LineTrapTester{
 	public static void main(String args[]){
 		LineTrap l = new LineTrap();
 		l.playGame();
