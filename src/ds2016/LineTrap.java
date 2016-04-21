@@ -9,22 +9,30 @@ import java.util.Scanner;
 
 class LineTrap extends AlternatingGame{
 	int numGridPoints;
-	char[][] board = new char[2*numGridPoints-1][2*numGridPoints-1]; //row 1st, col 2nd
+	char[][] board = new char[numGridPoints][numGridPoints]; //row 1st, col 2nd
 	int rowLocation;
 	int colLocation;
 	int whoseTurn = 1;
 	char VERTICALLINE = '\u2502';
 	char HORIZONTALLINE = '\u2500';
 	char MARKER = '@';
+	char EMPTYSPACE = '=';
 	// int numMoves = 0; // if time, include for stats
 
 	Scanner scanner;
 
 	public LineTrap(){
+		//sets grid size through user input
 		scanner = new Scanner(System.in);
-		rowLocation = numGridPoints/2;
-		colLocation = numGridPoints/2;
+		System.out.print("Please enter game size (must be odd):  ");
+		do {
+			numGridPoints = scanner.nextInt();
+		} while (numGridPoints > 3 && numGridPoints % 2 != 0); //insert an upper limit as appropriate
 
+		rowLocation = (int)Math.ceil((double)numGridPoints/2);
+		colLocation = (int)Math.ceil((double)numGridPoints/2);
+
+		//draws the initial blank board
 		for(int row = 0; row < numGridPoints; row++){
 			for(int col = 0; col < numGridPoints; col++){
 				if (row%2 == 0 && col%2 == 0) {
@@ -33,12 +41,8 @@ class LineTrap extends AlternatingGame{
 			}
 		}
 
-		char[][] b = new char[2*numGridPoints-1][2*numGridPoints-1];
-
-		System.out.print("Please enter game size (must be odd):  ");
-		do {
-			numGridPoints = scanner.nextInt();
-		} while (numGridPoints > 3 && numGridPoints % 2 != 0); //insert an upper limit as appropriate
+		//places the marker in the center of the board
+		board[rowLocation][colLocation] = MARKER;
 	}
 
 	public void drawBoard(){
@@ -69,7 +73,7 @@ class LineTrap extends AlternatingGame{
 	// need to protect against moves to outside the board
 	void getHumanMove() {
 		int newUpLocation = rowLocation + 2;
-		int newDownLocation = rowLocation -2;
+		int newDownLocation = rowLocation - 2;
 		int newRightLocation = colLocation - 2;
 		int newLeftLocation = colLocation + 2;
 		do {
@@ -130,19 +134,38 @@ class LineTrap extends AlternatingGame{
 		} else return 1;
 	}
 
+	/**
+	 * logic for smart game play implemented here
+	 * move 1 up/down/left/right and check if space is occupied.  if so, children can't be built there.
+	 * if not occupied, continue the process until can go no further.
+	 * when dead end is reached, evaluate who wins that leaf by analyzing whose turn
+	 * pick optimal move by propagating winners up the tree and then choosing
+	 * 
+	 * place lines and then switch whose turn
+	 */
 	@Override
-	// possibly recursion
-	// place the lines and then switch whose turn
-	Object[] getChildren(Object board) {
+	Object getChildren(Object board) {
 		char[][] parentBoard = (char[][])board;
-		int childWhoseTurn = 3 - whoseTurn((Object)parentBoard); //advantages vs. whoseTurn
-		
+		char[][] child; //this probably shouldn't exist at such a large scope
+		int childWhoseTurn = 3 - whoseTurn; //advantages vs. whoseTurn() method
+
 		DSArrayList<char[][]> children = new DSArrayList<char[][]>();
-		
-		for(int i = 0; i < rowLocation; i++){
-			for(int j = 0; j < colLocation; j++){
-				
+
+		for(int i = rowLocation; i < numGridPoints; i++){
+			for(int j = colLocation; j < numGridPoints; j++){
+				if (!isGameOver()) {
+					child = parentBoard;
+				} else if (child[i][j] == VERTICALLINE || child[i][j] == HORIZONTALLINE) {
+					continue;
+				} else 
 			}
 		}
-	}	
+		for(int i = rowLocation; i > 0; i--){
+			for(int j = colLocation; j > 0; j--){
+				if (!isGameOver()) {
+					child = parentBoard;
+				} else 
+			}
+		}
+	}
 }
