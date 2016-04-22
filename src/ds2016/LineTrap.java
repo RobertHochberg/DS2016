@@ -31,14 +31,15 @@ class LineTrap extends AlternatingGame{
 			numGridPoints = scanner.nextInt();
 		} while (numGridPoints < 3 || numGridPoints % 2 != 1); //insert an upper limit as appropriate
 
-		board = new char[numGridPoints][numGridPoints];
+		board = new char[2*numGridPoints-1][2*numGridPoints-1];
 
-		rowLocation = (int)Math.ceil((double)numGridPoints/2);
-		colLocation = (int)Math.ceil((double)numGridPoints/2);
+		// these use Math.floor() because computers count from 0, not 1
+		rowLocation = (int)Math.floor((double)(2*numGridPoints-1)/2);
+		colLocation = (int)Math.floor((double)(2*numGridPoints-1)/2);
 
 		//draws the initial blank board
-		for(int row = 0; row < numGridPoints; row++){
-			for(int col = 0; col < numGridPoints; col++){
+		for(int row = 0; row < 2*numGridPoints-1; row++){
+			for(int col = 0; col < 2*numGridPoints-1; col++){
 				if (row%2 == 0 && col%2 == 0) {
 					board[row][col] = DOT;
 				}
@@ -50,14 +51,16 @@ class LineTrap extends AlternatingGame{
 	}
 
 	public void drawBoard(){
-		for(int row = 0; row < numGridPoints; row++){
-			for(int col = 0; col < numGridPoints; col++){
-				System.out.print(board[row][col]);
+		for(int row = 0; row < 2*numGridPoints-1; row++){
+			for(int col = 0; col < 2*numGridPoints-1; col++){
+				if (col != 2*numGridPoints-1) {
+					System.out.print(board[row][col]);
+				}
 			}
+			System.out.print("\n");
 		}
 	}
 
-	/**
 	@Override
 	void setBoard(Object nb){
 		char[][]newBoard = (char[][])nb;
@@ -138,7 +141,6 @@ class LineTrap extends AlternatingGame{
 			return 2;
 		} else return 1;
 	}
-	 **/
 
 	/**
 	 * logic for smart game play implemented here
@@ -149,6 +151,7 @@ class LineTrap extends AlternatingGame{
 	 * 
 	 * place lines and then switch whose turn
 	 *
+	 */
 	@Override
 	Object[] getChildren(Object board){
 		char[][] parentBoard = (char[][])board;
@@ -174,5 +177,4 @@ class LineTrap extends AlternatingGame{
 			}
 		}
 	}
-	 **/
 }
