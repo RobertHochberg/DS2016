@@ -17,19 +17,21 @@ class LineTrap extends AlternatingGame{
 	char VERTICALLINE = '\u2502';
 	char HORIZONTALLINE = '\u2500';
 	char DOT = '*';
-	char MARKER = '@';
+	char MARKER = 'X';
 	char EMPTYSPACE = ' ';
+	String humanMove = "";
 	// int numMoves = 0; // if time, include for stats
 
 	Scanner scanner;
 
+	//add protection against invalid inputs for numGridPoints
 	public LineTrap(){
 		//sets grid size through user input
 		scanner = new Scanner(System.in);
 		System.out.print("Please enter game size (must be odd): ");
 		do {
 			numGridPoints = scanner.nextInt();
-		} while (numGridPoints < 3 || numGridPoints % 2 != 1); //insert an upper limit as appropriate
+		} while (numGridPoints < 3 || numGridPoints % 2 != 1);
 
 		board = new char[2*numGridPoints-1][2*numGridPoints-1];
 
@@ -42,7 +44,7 @@ class LineTrap extends AlternatingGame{
 			for(int col = 0; col < 2*numGridPoints-1; col++){
 				if (row%2 == 0 && col%2 == 0) {
 					board[row][col] = DOT;
-				}
+				} else board[row][col] = EMPTYSPACE;
 			}
 		}
 
@@ -77,39 +79,80 @@ class LineTrap extends AlternatingGame{
 	}
 
 	@Override
-	// consider not printing "Please make a move" or equivalent out
-	// need to protect against moves to outside the board
 	void getHumanMove(){
-		int newUpLocation = rowLocation + 2;
-		int newDownLocation = rowLocation - 2;
-		int newRightLocation = colLocation - 2;
-		int newLeftLocation = colLocation + 2;
-		String humanMove;
-
 		do {
-			System.out.println("Please make a move");
+			System.out.print("Please make a move: ");
 			humanMove = scanner.next();
-			if (humanMove.indexOf("w") != -1 && rowLocation != 0 && rowLocation != numGridPoints) {
-				board[rowLocation++][colLocation] = VERTICALLINE;
-				board[newUpLocation][colLocation] = MARKER;
-				rowLocation = newUpLocation;
-			} else if (humanMove.indexOf("s") != -1 && rowLocation != 0 && rowLocation != numGridPoints) {
-				board[--rowLocation][colLocation] = VERTICALLINE;
-				board[newDownLocation][colLocation] = MARKER;
-				rowLocation = newDownLocation;
-			} else if (humanMove.indexOf("a") != -1 && colLocation != 0 && colLocation != numGridPoints) {
-				board[rowLocation][--colLocation] = HORIZONTALLINE;
-				board[rowLocation][newRightLocation] = MARKER;
-				colLocation = newRightLocation;
-			} else if (colLocation != 0 && colLocation != numGridPoints) {
-				board[rowLocation][++colLocation] = HORIZONTALLINE;
-				board[rowLocation][newLeftLocation] = MARKER;
-				colLocation = newLeftLocation;
-			}
-		} while (humanMove.length() != 1 && humanMove.indexOf("w") == -1 && humanMove.indexOf("s") == -1 && humanMove.indexOf("a") == -1 && humanMove.indexOf("d") == -1);
+		} while (humanMove.indexOf("w") == -1 && humanMove.indexOf("W") == -1 && humanMove.indexOf("s") == -1 && humanMove.indexOf("S") == -1 && humanMove.indexOf("a") == -1 && humanMove.indexOf("A") == -1 && humanMove.indexOf("d") == -1 && humanMove.indexOf("D") == -1 || humanMove.length() != 1);
+
+		if (humanMove.indexOf("w") != -1) {
+			getUpMove();
+		} else if (humanMove.indexOf("W") != -1) {
+			getUpMove();
+		} else if (humanMove.indexOf("s") != -1) {
+			getDownMove();
+		} else if (humanMove.indexOf("S") != -1) {
+			getDownMove();
+		} else if (humanMove.indexOf("a") != -1) {
+			getRightMove();
+		} else if (humanMove.indexOf("A") != -1) {
+			getRightMove();
+		} else if (humanMove.indexOf("d") != -1) {
+			getLeftMove();
+		} else if (humanMove.indexOf("D") != -1) {
+			getLeftMove();
+		}
 
 		whoseTurn = 3-whoseTurn;
 		// numMoves++;
+	}
+
+	void getUpMove(){
+		while (rowLocation == 0 || board[rowLocation - 1][colLocation] == VERTICALLINE) {
+			System.out.println("I'm sorry, Dave. I'm afraid I can't do that.");
+			humanMove = "";
+			getHumanMove();
+			return;
+		}
+		board[rowLocation - 1][colLocation] = VERTICALLINE;
+		rowLocation = rowLocation - 2;
+		board[rowLocation][colLocation] = MARKER;
+	}
+
+	void getDownMove(){
+		while (rowLocation == 2*numGridPoints-2 || board[rowLocation + 1][colLocation] == VERTICALLINE) {
+			System.out.println("I'm sorry, Dave. I'm afraid I can't do that.");
+			humanMove = "";
+			getHumanMove();
+			return;
+		}
+		board[rowLocation + 1][colLocation] = VERTICALLINE;
+		rowLocation = rowLocation + 2;
+		board[rowLocation][colLocation] = MARKER;
+	}
+
+	void getRightMove(){
+		while (colLocation == 0 || board[rowLocation][colLocation - 1] == HORIZONTALLINE) {
+			System.out.println("I'm sorry, Dave. I'm afraid I can't do that.");
+			humanMove = "";
+			getHumanMove();
+			return;
+		}
+		board[rowLocation][colLocation - 1] = HORIZONTALLINE;
+		colLocation = colLocation - 2;
+		board[rowLocation][colLocation] = MARKER;
+	}
+
+	void getLeftMove(){
+		while (colLocation == 2*numGridPoints-2 || board[rowLocation][colLocation + 1] == HORIZONTALLINE) {
+			System.out.println("I'm sorry, Dave. I'm afraid I can't do that.");
+			humanMove = "";
+			getHumanMove();
+			return;
+		}
+		board[rowLocation][colLocation + 1] = HORIZONTALLINE;
+		colLocation = colLocation + 2;
+		board[rowLocation][colLocation] = MARKER;
 	}
 
 	@Override
@@ -125,9 +168,17 @@ class LineTrap extends AlternatingGame{
 
 	@Override
 	boolean isGameOver(){
-		if (rowLocation++ == VERTICALLINE && rowLocation-- == VERTICALLINE && colLocation++ == HORIZONTALLINE && colLocation-- == HORIZONTALLINE) {
+		if (rowLocation == 0 && board[rowLocation + 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation - 1] == HORIZONTALLINE && board[rowLocation][colLocation + 1] == HORIZONTALLINE) {
 			return true;
-		} else return false;
+		} else if (rowLocation == 2*numGridPoints-1 && board[rowLocation - 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation - 1] == HORIZONTALLINE && board[rowLocation][colLocation + 1] == HORIZONTALLINE) {
+			return true;
+		} else if (colLocation == 0 && board[rowLocation][colLocation + 1] == HORIZONTALLINE && board[rowLocation][colLocation - 1] == HORIZONTALLINE && board[rowLocation][colLocation + 1] == HORIZONTALLINE) {
+			return true;
+		} else if (colLocation == 2*numGridPoints-1 && board[rowLocation + 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation - 1] == HORIZONTALLINE && board[rowLocation][colLocation + 1] == HORIZONTALLINE) {
+			return true;
+		} else if (rowLocation == 0 && board[rowLocation + 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation - 1] == HORIZONTALLINE && board[rowLocation][colLocation + 1] == HORIZONTALLINE) {
+			return true;
+		} else 
 	}
 
 	@Override
