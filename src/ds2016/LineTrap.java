@@ -168,17 +168,31 @@ class LineTrap extends AlternatingGame{
 
 	@Override
 	boolean isGameOver(){
-		if (rowLocation == 0 && board[rowLocation + 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation - 1] == HORIZONTALLINE && board[rowLocation][colLocation + 1] == HORIZONTALLINE) {
+		if (rowLocation == 0 && colLocation == 0 && board[rowLocation + 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation + 1] == HORIZONTALLINE) {
 			return true;
+			//upper left corner
+		} else if (rowLocation == 0 && colLocation == 2*numGridPoints-1 && board[rowLocation + 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation - 1] == HORIZONTALLINE) {
+			return true;
+			//upper right corner
+		} else if (rowLocation == 2*numGridPoints-1 && colLocation == 0 && board[rowLocation - 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation + 1] == HORIZONTALLINE) {
+			return true;
+			//lower left corner
+		} else if (rowLocation == 2*numGridPoints-1 && colLocation == 2*numGridPoints-1 && board[rowLocation - 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation - 1] == HORIZONTALLINE) {
+			return true;
+			//lower right corner
+		} if (rowLocation == 0 && board[rowLocation + 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation - 1] == HORIZONTALLINE && board[rowLocation][colLocation + 1] == HORIZONTALLINE) {
+			return true;
+			//upper edge
 		} else if (rowLocation == 2*numGridPoints-1 && board[rowLocation - 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation - 1] == HORIZONTALLINE && board[rowLocation][colLocation + 1] == HORIZONTALLINE) {
 			return true;
-		} else if (colLocation == 0 && board[rowLocation][colLocation + 1] == HORIZONTALLINE && board[rowLocation][colLocation - 1] == HORIZONTALLINE && board[rowLocation][colLocation + 1] == HORIZONTALLINE) {
+			//lower edge
+		} else if (colLocation == 0 && board[rowLocation][colLocation + 1] == HORIZONTALLINE && board[rowLocation - 1][colLocation] == VERTICALLINE && board[rowLocation + 1][colLocation] == VERTICALLINE) {
 			return true;
-		} else if (colLocation == 2*numGridPoints-1 && board[rowLocation + 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation - 1] == HORIZONTALLINE && board[rowLocation][colLocation + 1] == HORIZONTALLINE) {
+			//left edge
+		} else if (colLocation == 2*numGridPoints-1 && board[rowLocation][colLocation - 1] == VERTICALLINE && board[rowLocation - 1][colLocation] == VERTICALLINE && board[rowLocation + 1][colLocation] == VERTICALLINE) {
 			return true;
-		} else if (rowLocation == 0 && board[rowLocation + 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation - 1] == HORIZONTALLINE && board[rowLocation][colLocation + 1] == HORIZONTALLINE) {
-			return true;
-		} else 
+			//right edge
+		} else return false;
 	}
 
 	@Override
