@@ -4,6 +4,7 @@
 
 package src.ds2016;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 class Nim extends AlternatingGame {
@@ -14,6 +15,14 @@ class Nim extends AlternatingGame {
 	int NUMPILES = 5;
 	Scanner scanner = new Scanner(System.in);
 
+	public Nim(int... pileSizes){ // Java will create the int array for us
+		NUMPILES = pileSizes.length;
+		board = new int[NUMPILES + 1];
+		board[0] = 1;
+		for(int i = 0; i < pileSizes.length; i++){
+			board[i+1] = pileSizes[i];
+		}
+	}
 
 	void drawBoard(){
 		for(int i = 1; i <= NUMPILES; i++){
@@ -87,7 +96,7 @@ class Nim extends AlternatingGame {
 	@Override
 	void setBoard(Object nb) {
 		board = (int[])nb;
-		
+
 	}
 
 
@@ -122,7 +131,7 @@ class Nim extends AlternatingGame {
 	Object[] getChildren(Object b) {
 		int[] parentBoard = (int[])b;
 		int childTurn = 3 - parentBoard[0];
-		
+
 		DSArrayList<int[]> children = new DSArrayList<int[]>();
 		for(int pile = 1; pile <= NUMPILES; pile++){
 			for(int newNum = 0; newNum < parentBoard[pile]; newNum++){
@@ -137,6 +146,10 @@ class Nim extends AlternatingGame {
 			}
 		}
 		return children.toArray();
+	}
+
+	public String toString(Object board){
+		return Arrays.toString((int[])board);
 	}
 
 }

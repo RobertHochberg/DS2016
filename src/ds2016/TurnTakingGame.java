@@ -7,6 +7,8 @@
 
 package src.ds2016;
 
+import java.util.HashMap;
+
 abstract class TurnTakingGame{
 	int numberOfPlayers;
 
@@ -15,12 +17,23 @@ abstract class TurnTakingGame{
 	abstract void doEndgameStuff();
 	abstract int  whoseTurn(Object localBoard);
 	abstract int  whoWon(Object board);
+	abstract String toString(Object board);
 
+	
+	HashMap<String, DSNode> treeMap = new HashMap<String, DSNode>();
+	
 	/**
 	 * Builds a game tree and returns the DSNode that 
 	 * is the root of that tree
 	 */
 	DSNode buildTree(Object board){
+		String boardString = toString(board);
+		
+		// Check to see if we've already processed this string.
+		if(treeMap.containsKey(boardString)){
+			return treeMap.get(boardString);
+		}
+		
 		// root is the DSNode we we return
 		DSNode root = new DSNode< Object >();
 		//root.board = board; // bad, violates encapsulation
@@ -33,6 +46,10 @@ abstract class TurnTakingGame{
 			DSNode childNode = buildTree(ch[i]);
 			root.addChild(childNode);
 		}
+		
+		// Save this work in case we see this board again.
+		treeMap.put(boardString, root);
+		
 		return root;
 	}
 

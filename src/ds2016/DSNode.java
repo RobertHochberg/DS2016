@@ -15,7 +15,7 @@ class DSNode< E >{
 	private int winner;	// 0 = tie, 1, 2, 3, ... = the wining player		
 	private E   board;
 	private DSArrayList<DSNode> children = new DSArrayList<DSNode>();
-	private int      numChildren = 0;
+	private int numChildren = 0;
 
 	public void setBoard(E b){
 		board = b;
@@ -53,28 +53,21 @@ class DSNode< E >{
 		this.winner = w;
 	}
 
-	public int numLeaves(){
+	public int numLeaves()
+	{
 		int rv = 0;
 
 		if(this.numChildren == 0)
 			rv = 1;
-		else {
-			for(int i = 0; i < this.numChildren; i++){
+		else
+		{
+			for(int i = 0; i < this.numChildren; i++)
+			{
 				rv += children.get(i).numLeaves();
 			}
 		}
 
 		return rv;
-	}
+	} 
 
-	public int numNodes(){
-		int rv = 0;
-
-		if(this.numChildren == 0){
-			rv = 1;
-		} else for(int i = 0; i < this.numChildren; i++){
-			rv = this.numChildren + children.get(i).numNodes();
-		}
-		return rv + 1;
-	}
 }
