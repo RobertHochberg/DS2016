@@ -36,7 +36,7 @@ public class DSArrayList< J > {
 	 */
 	public J add(J thingToAdd){
 		if(size == jays.length){ // We need to re-size the array
-			System.out.println("Re-sizing " + size);
+			//System.out.println("Re-sizing " + size);
 			int currentLength = jays.length;
 			int newLength = 2 * currentLength;
 			J[] newJays = (J[])(new Object[newLength]);
@@ -81,9 +81,8 @@ public class DSArrayList< J > {
 	/**
 	 * Returns the last item in the DSArrayList and removes it
 	 */
-	public J pop(){
+	public void pop(){
 		size--;
-		return jays[0];
 	}
 	
 	public int getSize(){

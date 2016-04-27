@@ -15,7 +15,7 @@ class DSNode< E >{
 	private int winner;	// 0 = tie, 1, 2, 3, ... = the wining player		
 	private E   board;
 	private DSArrayList<DSNode> children = new DSArrayList<DSNode>();
-	private int      numChildren = 0;
+	private int numChildren = 0;
 
 	public void setBoard(E b){
 		board = b;
@@ -69,4 +69,5 @@ class DSNode< E >{
 
 		return rv;
 	} 
+
 }
