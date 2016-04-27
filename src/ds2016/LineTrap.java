@@ -10,17 +10,18 @@ import java.util.Scanner;
 
 class LineTrap extends AlternatingGame{
 	int numGridPoints;
-	char[][] board;; //row 1st, col 2nd
+	char[][] board; //row 1st, col 2nd
 	int rowLocation;
 	int colLocation;
-	int whoseTurn = 1;
 	char VERTICALLINE = '\u2502';
 	char HORIZONTALLINE = '\u2500';
 	char DOT = '*';
 	char USEDDOT = 'O';
 	char MARKER = 'X';
-	char EMPTYSPACE = ' ';
 	String humanMove = "";
+	// these exist so that board[1][1] can hold whose turn
+	char pOne = 1;
+	char pTwo = 2;
 	// int numMoves = 0; // if time, include for stats
 
 	Scanner scanner;
@@ -48,19 +49,26 @@ class LineTrap extends AlternatingGame{
 			for(int col = 0; col < 2*numGridPoints-1; col++){
 				if (row%2 == 0 && col%2 == 0) {
 					board[row][col] = DOT;
-				} else board[row][col] = EMPTYSPACE;
+				}
 			}
 		}
 
 		//places the marker in the center of the board
 		board[rowLocation][colLocation] = MARKER;
+		
+		//whoseTurn is tracked through board[1][1]
+		board[1][1] = pOne;
+		
+		whoseTurn = 1;
 	}
 
 	public void drawBoard(){
 		for(int row = 0; row < 2*numGridPoints-1; row++){
 			for(int col = 0; col < 2*numGridPoints-1; col++){
 				if (col != 2*numGridPoints-1) {
-					System.out.print(board[row][col]);
+					if (row == 1 && col == 1) {
+						System.out.print(" ");
+					}else System.out.print(board[row][col]);
 				}
 			}
 			System.out.print("\n");
@@ -102,7 +110,11 @@ class LineTrap extends AlternatingGame{
 			getLeftMove();
 		}
 
-		whoseTurn = 3-whoseTurn;
+		whoseTurn = 3 - whoseTurn;
+		
+		if (whoseTurn == 1) {
+			board[1][1] = pOne;
+		} else board[1][1] = pTwo;
 		// numMoves++;
 	}
 
@@ -240,10 +252,10 @@ class LineTrap extends AlternatingGame{
 	 *
 	 */
 	@Override
-	Object[] getChildren(Object board){
-		char[][] parentBoard = (char[][])board;
-		char[][] child; //this probably shouldn't exist at such a large scope
-		int childWhoseTurn = 3 - whoseTurn; //advantages vs. whoseTurn() method
+	Object[] getChildren(Object b){
+		char[][] parentBoard = (char[][])b;
+		char[][] child;
+		int childWhoseTurn = (int)(board[1][1]);
 
 		DSArrayList<char[][]> children = new DSArrayList<char[][]>();
 
