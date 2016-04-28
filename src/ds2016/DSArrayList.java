@@ -16,53 +16,26 @@ public class DSArrayList< J > {
 	 */
 	private J[] jays;
 	
-<<<<<<< HEAD
+/**
+ * Number of elements in the DSArrayList, and the location
+ * where the next entry should go
+ */
 	private int size = 0;
 	
 	private final int INITIAL_SIZE = 10;
-
-=======
-	/**
-	 * Number of elements in the DSArrayList, and the location
-	 * where the next entry should go
-	 */
-	private int size;
->>>>>>> refs/remotes/origin/master
 	/**
 	 * Constructor
 	 */
 	public DSArrayList(){
-<<<<<<< HEAD
 		jays = (J[])(new Object[INITIAL_SIZE]);
-=======
-		jays = (J[])(new Object[10]);
-		size = 0;
->>>>>>> refs/remotes/origin/master
 	}
 	
 	/**
-<<<<<<< HEAD
-	 * "Simply" insert something at the end of the DSArrayList
-	 */
-	public void add(J thingToAdd){
-		// If the size is the same as jays.length or greater, we need to resize the array
-		if(this.size >= this.jays.length)
-		{
-			J[] tempArray = (J[])(new Object[this.jays.length * 2]);
-			for(int i = 0; i < this.jays.length; i++)
-			{
-				tempArray[i] = this.jays[i];
-			}
-			
-			this.jays = tempArray;
-		}
-		
-		this.jays[this.size++] = thingToAdd;
-=======
 	 * Simply insert something at the end of the DSArrayList
 	 * 
 	 * @return The item added
 	 */
+	
 	public J add(J thingToAdd){
 		if(size == jays.length){ // We need to re-size the array
 			//System.out.println("Re-sizing " + size);
@@ -80,7 +53,6 @@ public class DSArrayList< J > {
 		
 		
 		return thingToAdd;
->>>>>>> refs/remotes/origin/master
 	}
 	
 	/**
@@ -89,14 +61,11 @@ public class DSArrayList< J > {
 	 * @param idx The index of the item to return
 	 */
 	public J get(int idx){
-<<<<<<< HEAD
+		
 		if(idx <= this.size && idx >= 0)
 			return this.jays[idx];
 		else 
 			return null;
-=======
-		return jays[idx];
->>>>>>> refs/remotes/origin/master
 	}
 	
 	/**
@@ -104,25 +73,18 @@ public class DSArrayList< J > {
 	 * 
 	 * @param idx The index of the item to change
 	 */
-<<<<<<< HEAD
 	public void set(int idx, J newValue){
 		if(idx >= this.size || idx < 0)
 			return;
 		
 		this.jays[idx] = newValue;
 	}
-
-=======
-	public void set(int idx, J newValue){}
-	
->>>>>>> refs/remotes/origin/master
 	/**
 	 * Remove an item from the DSArrayList and close the gap
 	 * 
 	 * 
 	 */
 	public void remove(int idx){
-<<<<<<< HEAD
 		// If the given index is greater than the size of the array, exit
 		// Alternatively, we could throw an error
 		if(idx >= this.size) return;
@@ -163,15 +125,11 @@ public class DSArrayList< J > {
 		// Therefore, we set size to p rather than using size-- to ensure
 		// that the size is the same as the number of items in the new array
 		this.size = p;
-=======
-		size--;
->>>>>>> refs/remotes/origin/master
 	}
 	
 	/**
 	 * Returns the last item in the DSArrayList and removes it
 	 */
-<<<<<<< HEAD
 	public J pop(){
 		J rval = this.jays[this.size - 1];
 
@@ -179,22 +137,6 @@ public class DSArrayList< J > {
 		this.remove(this.size - 1);
 		
 		return rval;
-=======
-	public void pop(){
-		size--;
-	}
-	
-	public int getSize(){
-		return size;
-	}
-	
-	/**
-	 * Insert an item into the Arraylist at the specified location
-	 * @param idx
-	 * @param thingToAdd
-	 */
-	public void insert(J thingToAdd, int idx){
-		
 	}
 	
 	/**
@@ -206,7 +148,6 @@ public class DSArrayList< J > {
 		for(int i = 0; i < size; i++)
 			rv[i] = jays[i];
 		return rv;
->>>>>>> refs/remotes/origin/master
 	}
 	
 	public int getSize(){
