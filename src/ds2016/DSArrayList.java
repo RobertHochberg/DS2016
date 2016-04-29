@@ -33,12 +33,25 @@ public class DSArrayList< J > {
 	/**
 	 * Simply insert something at the end of the DSArrayList
 	 */
+<<<<<<< HEAD
 	public void add(J thingToAdd){
 		for (int i = 0; i < this.jays.length; i++){
 			if (this.jays[i] == null) {
 				this.jays[i] = thingToAdd;
 				break;
 			}
+=======
+	public J add(J thingToAdd){
+		if(size == jays.length){ // We need to re-size the array
+			//System.out.println("Re-sizing " + size);
+			int currentLength = jays.length;
+			int newLength = 2 * currentLength;
+			J[] newJays = (J[])(new Object[newLength]);
+			// copy the old array into the new array
+			for(int i = 0; i < currentLength; i++)
+				newJays[i] = jays[i];
+			jays = newJays;
+>>>>>>> master
 		}
 
 	}
@@ -75,6 +88,7 @@ public class DSArrayList< J > {
 	 * Returns the last item in the DSArrayList and removes it
 	 * @return 
 	 */
+<<<<<<< HEAD
 //	public J pop(){
 //		J lastItem = jays[jays.length - 1];
 //		J[] newJays = (J[])(new Object[jays.length]);
@@ -101,6 +115,10 @@ public class DSArrayList< J > {
 			this.jays[this.jays.length - 1] = null;
 		}
 		return rval;
+=======
+	public void pop(){
+		size--;
+>>>>>>> master
 	}
 	
 	public int getSize(){
