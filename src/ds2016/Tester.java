@@ -43,9 +43,10 @@ class Tester{
 		DSArrayList<Integer> a = new DSArrayList<>();
 		
 		for(int i = 0; i < 10; i++)
-			a.add((3*i) % 10);
-			
-		a.insert(a.pop(), 6);
+			a.add(i);
+		Integer temp = a.pop();
+		System.out.println(temp);
+		a.insert(temp, 6);
 		a.remove(2);
 		a.insert(a.pop(), 2);
 		a.remove(3);

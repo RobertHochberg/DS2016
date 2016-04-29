@@ -75,20 +75,42 @@ public class DSArrayList< J > {
 	 * Returns the last item in the DSArrayList and removes it
 	 * @return 
 	 */
-	public J pop(){
-		J lastItem = jays[jays.length - 1];
-		J[] newJays = (J[])(new Object[jays.length]);
-		for(int i = 0; i < jays.length - 1; i++){
-			newJays[i] = jays[i];
+//	public J pop(){
+//		J lastItem = jays[jays.length - 1];
+//		J[] newJays = (J[])(new Object[jays.length]);
+//		for(int i = 0; i < jays.length - 1; i++){
+//			newJays[i] = jays[i];
+//		}
+//		size--;
+//		jays = newJays;
+//		return lastItem;
+//
+//	}
+	
+	public J pop() {
+		J rval = null;
+		for (int i = 0; i < this.jays.length - 1; i++) {
+			if (this.jays[i + 1] == null) {
+				rval = this.jays[i];
+				this.jays[i] = null;
+				break;
+			}
 		}
-		size--;
-		jays = newJays;
-		return lastItem;
-
+		if (rval == null) {
+			rval = this.jays[this.jays.length - 1];
+			this.jays[this.jays.length - 1] = null;
+		}
+		return rval;
 	}
 	
 	public int getSize(){
 		return size;
+	}
+	
+	public J[] copyOver(J[] old,J[] newl){
+		for(int i = 0; i < old.length; i++)
+			newl[i] = old[i];
+		return newl;
 	}
 	
 	/**
@@ -98,6 +120,10 @@ public class DSArrayList< J > {
 	 */
 	public J insert(J thingToAdd, int idx){
 		J rval = null;
+		if(jays.length < this.size + 1){
+			J[] newl = (J[]) new Object[this.size*2]; 
+			jays = copyOver(jays, newl);
+		}
 		for (int i = 0; i < this.jays.length - 1; i++){
 			if (this.jays[i + 1] == null) {
 				rval = this.jays[i];
