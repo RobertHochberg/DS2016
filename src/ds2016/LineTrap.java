@@ -10,6 +10,7 @@ import java.util.Scanner;
 
 class LineTrap extends AlternatingGame{
 	int numGridPoints;
+	int boardSize;
 	char[][] board; //row 1st, col 2nd
 	int rowLocation;
 	int colLocation;
@@ -38,15 +39,16 @@ class LineTrap extends AlternatingGame{
 			numGridPoints = scanner.nextInt();
 		} while (numGridPoints < 3 || numGridPoints % 2 != 1);
 
-		board = new char[2*numGridPoints-1][2*numGridPoints-1];
+		boardSize = 2*numGridPoints-1;
+		board = new char[boardSize][boardSize];
 
 		// these use Math.floor() because computers count from 0, not 1
-		rowLocation = (int)Math.floor((double)(2*numGridPoints-1)/2);
-		colLocation = (int)Math.floor((double)(2*numGridPoints-1)/2);
+		rowLocation = (int)Math.floor((double)(boardSize)/2);
+		colLocation = (int)Math.floor((double)(boardSize)/2);
 
 		//draws the initial blank board
-		for(int row = 0; row < 2*numGridPoints-1; row++){
-			for(int col = 0; col < 2*numGridPoints-1; col++){
+		for(int row = 0; row < boardSize; row++){
+			for(int col = 0; col < boardSize; col++){
 				if (row%2 == 0 && col%2 == 0) {
 					board[row][col] = DOT;
 				}
@@ -55,17 +57,17 @@ class LineTrap extends AlternatingGame{
 
 		//places the marker in the center of the board
 		board[rowLocation][colLocation] = MARKER;
-		
+
 		//whoseTurn is tracked through board[1][1]
 		board[1][1] = pOne;
-		
+
 		whoseTurn = 1;
 	}
 
 	public void drawBoard(){
-		for(int row = 0; row < 2*numGridPoints-1; row++){
-			for(int col = 0; col < 2*numGridPoints-1; col++){
-				if (col != 2*numGridPoints-1) {
+		for(int row = 0; row < boardSize; row++){
+			for(int col = 0; col < boardSize; col++){
+				if (col != boardSize) {
 					if (row == 1 && col == 1) {
 						System.out.print(" ");
 					}else System.out.print(board[row][col]);
@@ -111,7 +113,7 @@ class LineTrap extends AlternatingGame{
 		}
 
 		whoseTurn = 3 - whoseTurn;
-		
+
 		if (whoseTurn == 1) {
 			board[1][1] = pOne;
 		} else board[1][1] = pTwo;
@@ -242,38 +244,142 @@ class LineTrap extends AlternatingGame{
 	}
 
 	/**
-	 * logic for smart game play implemented here
-	 * move 1 up/down/left/right and check if space is occupied.  if so, children can't be built there.
-	 * if not occupied, continue the process until can go no further.
-	 * when dead end is reached, evaluate who wins that leaf by analyzing whose turn
-	 * pick optimal move by propagating winners up the tree and then choosing
-	 * 
-	 * place lines and then switch whose turn
-	 *
+	 * get a child by moving u/d/l/r, add the child to the array, repeat
+	 * repeat using recursion and put moves into separate methods
+	 * repeat using for loop, get() from DSArrayList and DSArrayList length, call getChildren() for each item
 	 */
 	@Override
 	Object[] getChildren(Object b){
-		char[][] parentBoard = (char[][])b;
-		char[][] child;
-		int childWhoseTurn = (int)(board[1][1]);
+		char[][] parent = (char[][])b;
+		int childWhoseTurn = 3 - parent[1][1];
+		DSArrayList<Object[]> childrenHolder = new DSArrayList<Object[]>(); //probably should be more specific than Object[]
+		int localRowLocation = 0;
+		int localColLocation = 0;
 
-		DSArrayList<char[][]> children = new DSArrayList<char[][]>();
+		//finds the location of MARKER on parent[][]
+		markerfinder:
+			for(int row = 0; row < boardSize; row++){
+				for(int col = 0; col < boardSize; col++){
+					if (parent[row][col] == MARKER) {
+						localRowLocation = row;
+						localColLocation = col;
+						break markerfinder;
+					} else if (parent[row][col] != MARKER) {
+						continue;
+					}
+				}
+			}
 
-		for(int i = rowLocation; i < numGridPoints; i++){
-			for(int j = colLocation; j < numGridPoints; j++){
-				if (!isGameOver()) {
-					child = parentBoard;
-				} else if (child[i][j] == VERTICALLINE || child[i][j] == HORIZONTALLINE) {
-					continue;
-				} else 
+		if (localRowLocation != 0) {
+			char[][] child = new char[boardSize][boardSize];
+			int localRL = rowLocation;
+			int localCL = colLocation;
+			if (parent[localRL - 1][localCL] != VERTICALLINE) {
+				for(int row = 0; row < boardSize; row++){
+					for(int col = 0; col < boardSize; col++){
+						child[row][col] = parent[row][col];
+					}
+				}
+				child[localRL - 1][localCL] = VERTICALLINE;
+				child[localRL][localCL] = USEDDOT;
+				localRL = localRL - 2;
+				child[localRL][localCL] = MARKER;
+				child[1][1] = (char)(3 - childWhoseTurn);
+				childrenHolder.add(child);
 			}
 		}
-		for(int k = rowLocation; k > 0; k--){
-			for(int l = colLocation; l > 0; l--){
-				if (!isGameOver()) {
-					child = parentBoard;
-				} else 
+
+		if (localRowLocation != 2*numGridPoints-2) {
+			char[][] child = new char[boardSize][boardSize];
+			int localRL = rowLocation;
+			int localCL = colLocation;
+			if (parent[localRL + 1][localCL] != VERTICALLINE) {
+				for(int row = 0; row < boardSize; row++){
+					for(int col = 0; col < boardSize; col++){
+						child[row][col] = parent[row][col];
+					}
+				}
+				child[localRL + 1][localCL] = VERTICALLINE;
+				child[localRL][localCL] = USEDDOT;
+				localRL = localRL + 2;
+				child[localRL][localCL] = MARKER;
+				child[1][1] = (char)(3 - childWhoseTurn);
+				childrenHolder.add(child);
 			}
 		}
+
+		if (localColLocation != 0) {
+			char[][] child = new char[boardSize][boardSize];
+			int localRL = rowLocation;
+			int localCL = colLocation;
+			if (parent[localRL][localCL - 1] != HORIZONTALLINE) {
+				for(int row = 0; row < boardSize; row++){
+					for(int col = 0; col < boardSize; col++){
+						child[row][col] = parent[row][col];
+					}
+				}
+				child[localRL][localCL - 1] = HORIZONTALLINE;
+				child[localRL][localCL] = USEDDOT;
+				localCL = localCL - 2;
+				child[localRL][localCL] = MARKER;
+				child[1][1] = (char)(3 - childWhoseTurn);
+				childrenHolder.add(child);
+			}
+		}
+
+		if (localColLocation != 2*numGridPoints-2) {
+			char[][] child = new char[boardSize][boardSize];
+			int localRL = rowLocation;
+			int localCL = colLocation;
+			if (parent[localRL][localCL + 1] != HORIZONTALLINE) {
+				for(int row = 0; row < boardSize; row++){
+					for(int col = 0; col < boardSize; col++){
+						child[row][col] = parent[row][col];
+					}
+				}
+				child[localRL][localCL + 1] = HORIZONTALLINE;
+				child[localRL][localCL] = USEDDOT;
+				localCL = localCL + 2;
+				child[localRL][localCL] = MARKER;
+				child[1][1] = (char)(3 - childWhoseTurn);
+				childrenHolder.add(child);
+			}
+		}
+
+		for(int i = 0; i < childrenHolder.getSize(); i++){
+			getChildren(childrenHolder.get(i));
+		}
+
+		return childrenHolder.toArray();
+	}
+
+	@Override
+	String toString(Object board) {
+		String boardAsString = "";
+		char[][] b = (char[][]) board;
+		String[][] stringBoard = new String[boardSize][boardSize];
+
+		//copies char[][] b into equivalent String[][] stringBoard
+		//done so that it concats into String
+		for(int i = 0; i < boardSize; i++){
+			for(int j = 0; j < boardSize; j++){
+				if (b[i][j] == VERTICALLINE) {
+					stringBoard[i][j] = "v";
+				} else if (b[i][j] == HORIZONTALLINE) {
+					stringBoard[i][j] = "h";
+				} else stringBoard[i][j] = "";
+			}
+		}
+		if (b[1][1] == pOne) {
+			stringBoard[1][1] = "one";
+		} else stringBoard[1][1] = "two";
+
+		for(int i = 0; i < boardSize; i++){
+			for(int j = 0; j < boardSize; j++){
+				boardAsString = boardAsString.concat(stringBoard[i][j]);
+			}
+		}
+
+		return boardAsString;
 	}
 }
