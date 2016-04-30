@@ -23,7 +23,6 @@ class LineTrap extends AlternatingGame{
 	// these exist so that board[1][1] can hold whose turn
 	char pOne = 1;
 	char pTwo = 2;
-	// int numMoves = 0; // if time, include for stats
 
 	Scanner scanner;
 
@@ -61,7 +60,7 @@ class LineTrap extends AlternatingGame{
 		//whoseTurn is tracked through board[1][1]
 		board[1][1] = pOne;
 
-		whoseTurn = 1;
+		whoseTurn = (int)board[1][1];
 	}
 
 	public void drawBoard(){
@@ -112,12 +111,10 @@ class LineTrap extends AlternatingGame{
 			getLeftMove();
 		}
 
-		whoseTurn = 3 - whoseTurn;
-
 		if (whoseTurn == 1) {
-			board[1][1] = pOne;
-		} else board[1][1] = pTwo;
-		// numMoves++;
+			board[1][1] = pTwo;
+		} else board[1][1] = pOne;
+		whoseTurn = (int)board[1][1];
 	}
 
 	void getUpMove(){
@@ -175,12 +172,11 @@ class LineTrap extends AlternatingGame{
 	@Override
 	void getComputerMove(){
 		getSmartComputerMove();
-		// numMoves++;
 	}
 
 	@Override
 	int whoseTurn(Object localBoard){
-		return whoseTurn(localBoard);
+		return whoseTurn;
 	}
 
 	@Override
@@ -252,7 +248,7 @@ class LineTrap extends AlternatingGame{
 	Object[] getChildren(Object b){
 		char[][] parent = (char[][])b;
 		int childWhoseTurn = 3 - parent[1][1];
-		DSArrayList<Object[]> childrenHolder = new DSArrayList<Object[]>(); //probably should be more specific than Object[]
+		DSArrayList<Object[]> childrenHolder = new DSArrayList<Object[]>();
 		int localRowLocation = 0;
 		int localColLocation = 0;
 
