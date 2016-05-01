@@ -1,5 +1,6 @@
 package ds2016;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 /**
@@ -265,5 +266,10 @@ public class DotsAndBoxes extends SemiAlternatingGame {
 		else if(p1 < p2)
 			return 2;
 		return 0;
+	}
+
+	@Override
+	String toString(Object board) {
+		return Arrays.toString((char[][])board);
 	}
 }

@@ -4,6 +4,7 @@
 
 package ds2016;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 class TicTacToe extends AlternatingGame {
@@ -322,6 +323,11 @@ class TicTacToe extends AlternatingGame {
 	
 	public Object getBoard(){
 		return board;
+	}
+
+	@Override
+	String toString(Object board) {
+		return Arrays.toString((char[])board);
 	}
 
 
