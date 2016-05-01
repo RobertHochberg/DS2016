@@ -10,8 +10,8 @@ import java.util.Scanner;
 public class DotsAndBoxes extends SemiAlternatingGame {
 
 	char[][] board;
-	int boardSize = 5;  //(boardSize + 1) / 2 = the number of dots on each row and column\
-	byte difficulty = 2; // 1 = getDumbComputerMove(), 2 = getSmartComputerMove()
+	int boardSize = 5;  //(boardSize + 1) / 2 = the number of dots on each row and column
+	byte difficulty = 3; // 1 = getDumbComputerMove(), 2 = getSmartComputerMove(), 3 = getHeuristicComputerMove()
 	Scanner scan = new Scanner(System.in);
 
 	public DotsAndBoxes() {
@@ -29,6 +29,7 @@ public class DotsAndBoxes extends SemiAlternatingGame {
 				}
 			}
 		}
+		board[0][0] = '1';
 	}
 
 	@Override
@@ -42,7 +43,7 @@ public class DotsAndBoxes extends SemiAlternatingGame {
 
 	@Override
 	int whoseTurn(Object localBoard) {
-		char[][] b = (char[][]) localBoard;
+		/*char[][] b = (char[][]) localBoard;
 		int count = 0;
 		for(char[] i: b){
 			for(char c: i){
@@ -50,7 +51,8 @@ public class DotsAndBoxes extends SemiAlternatingGame {
 					count++;
 			}
 		}
-		return count%2+1;
+		return count%2+1;*/
+		return ((char[][])localBoard)[0][0];
 	}
 
 	@Override
@@ -65,11 +67,17 @@ public class DotsAndBoxes extends SemiAlternatingGame {
 					p2++;
 			}
 		}
+		if(b[0][0] == '1')
+			p1--;
+		else if(b[0][0] == '2')
+			p2--;
+		
 		if(p1 > p2)
 			return 1;
 		else if(p1 < p2)
 			return 2;
-		return 0;
+		else
+			return 0;
 	}
 
 	@Override
@@ -109,13 +117,18 @@ public class DotsAndBoxes extends SemiAlternatingGame {
 	@Override
 	void drawBoard() {
 		int y = 2;
+		if(!isGameOver())
+			System.out.println("It is Player " + whoseTurn + "'s turn.");
 		System.out.print("  ");
 		for(int x = 1; x <= boardSize; x++)
 			System.out.print(x);
 		System.out.print("\n1 ");
 		for(int row = 0; row < boardSize; row++){
 			for(int col = 0; col < boardSize; col++){
-				System.out.print(board[row][col]);
+				if(row == 0 && col == 0)
+					System.out.print("*");
+				else
+					System.out.print(board[row][col]);
 				if(col == boardSize - 1 && y <= boardSize){
 					System.out.print("\n" + y++ + " ");
 				}
@@ -135,7 +148,7 @@ public class DotsAndBoxes extends SemiAlternatingGame {
 			r = scan.nextInt();
 			System.out.print("Please enter a column to make a move at: ");
 			c = scan.nextInt();
-			while(board[--r][--c] != ' '){
+			while(r < 1 || r > boardSize || c < 1 || c > boardSize|| board[--r][--c] != ' '){
 				System.out.println("That  move was invalid, please try again.  The numbers above and to the left of the board correspond to the proper values.");
 				System.out.print("Please enter a row to make a move at: ");
 				r = scan.nextInt();
@@ -148,6 +161,10 @@ public class DotsAndBoxes extends SemiAlternatingGame {
 				board[r][c] = '|';
 		}while(playAgain(board, whoseTurn) && !isGameOver());
 		whoseTurn = 3 - whoseTurn;
+		if(whoseTurn == 1)
+			board[0][0] = '1';
+		else
+			board[0][0] = '2';
 	}
 
 	@Override
@@ -155,10 +172,16 @@ public class DotsAndBoxes extends SemiAlternatingGame {
 		do{
 			if(difficulty == 1)
 				getDumbComputerMove();
-			else
+			else if(difficulty == 2)
 				getSmartComputerMove();
+			else
+				getHeuristicComputerMove();
 		}while(playAgain(board, whoseTurn) && !isGameOver());
 		whoseTurn = 3 - whoseTurn;
+		if(whoseTurn == 1)
+			board[0][0] = '1';
+		else
+			board[0][0] = '2';
 	}
 	
 	/*
@@ -261,15 +284,53 @@ public class DotsAndBoxes extends SemiAlternatingGame {
 					p2++;
 			}
 		}
+		if(board[0][0] == '1')
+			p1--;
+		else if(board[0][0] == '2')
+			p2--;
+		
 		if(p1 > p2)
 			return 1;
 		else if(p1 < p2)
 			return 2;
-		return 0;
+		else
+			return 0;
 	}
 
 	@Override
 	String toString(Object board) {
 		return Arrays.toString((char[][])board);
+	}
+
+	@Override
+	int heuristicEvaluation(Object board) {
+		int w = 0;
+		char[][] b = (char[][])board;
+		for(int row = 0; row < boardSize; row++){
+			for(int col = 0; col < boardSize; col++){
+				if(b[row][col] == '0'){
+					int lineCount = 0;
+					if(b[row-1][col] == '-')
+						lineCount++;
+					if(b[row+1][col] == '-')
+						lineCount++;
+					if(b[row][col-1] == '|')
+						lineCount++;
+					if(b[row][col+1] == '|')
+						lineCount++;
+					if(lineCount == 3){
+						if(whoseTurn(b) == 1)
+							w+=5;
+						else
+							w-=5;
+					}
+				}
+				else if(b[row][col] == '1')
+					w+=10;
+				else if(b[row][col] == '2')
+					w-=10;
+			}
+		}
+		return w;
 	}
 }

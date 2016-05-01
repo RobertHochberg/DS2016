@@ -330,6 +330,11 @@ class TicTacToe extends AlternatingGame {
 		return Arrays.toString((char[])board);
 	}
 
+	@Override
+	int heuristicEvaluation(Object board) {
+		return whoseTurn(board);
+	}
+
 
 }
 

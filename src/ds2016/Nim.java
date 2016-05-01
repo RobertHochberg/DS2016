@@ -152,4 +152,9 @@ class Nim extends AlternatingGame {
 		return Arrays.toString((int[])board);
 	}
 
+	@Override
+	int heuristicEvaluation(Object board) {
+		return whoseTurn(board);
+	}
+
 }

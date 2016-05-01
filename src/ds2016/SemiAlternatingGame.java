@@ -75,6 +75,45 @@ abstract class SemiAlternatingGame extends TurnTakingGame {
 		// We make our move by copying the newBoard into board
 		setBoard(newBoard);
 	}
+	
+	/**
+	 * Gets the computer player's move
+	 *
+	 * Picks a winning move, if available.
+	 * Otherwise, pick a tie move.
+	 *
+	 */
+	void getHeuristicComputerMove(){
+		Object board = getBoard();
+		Object[] children = getChildren(board);
+		Object newBoard = children[0];
+		
+		// Assume for now 2 players
+		int winner = 3 - whoseTurn;
+		for(int i = 0; i < children.length; i++){
+			DSNode childTree = buildTree(children[i], 3);
+			int childVal = evaluateTreeHeuristic(childTree);  // Recursive call
+			if(whoseTurn == 1){
+				if(childVal > winner){
+					winner = childVal;
+					newBoard = children[i];
+				}
+			} else 
+				if(childVal < winner){
+					winner = childVal;
+					newBoard = children[i];
+				}
+		} // end of looping over children
+		
+		if(winner > 0)
+			System.out.println("Player 1 has the win!");
+		else if(winner < 0)
+			System.out.println("Player 2 has the win!");
+		
+		// board = newBoard; // This won't work right.
+		// We make our move by copying the newBoard into board
+		setBoard(newBoard);
+	}
 
 	/**
 	 * Simply declares who won, if anybody.
