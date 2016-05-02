@@ -71,7 +71,7 @@ public class DotsAndBoxes extends SemiAlternatingGame {
 			p1--;
 		else if(b[0][0] == '2')
 			p2--;
-		
+
 		if(p1 > p2)
 			return 1;
 		else if(p1 < p2)
@@ -96,6 +96,13 @@ public class DotsAndBoxes extends SemiAlternatingGame {
 						b[row][col] = '-';
 					else
 						b[row][col] = '|';
+					
+					if(!playAgain(b, b[0][0])){
+						if(b[0][0] == '1')
+							b[0][0] = '2';
+						else
+							b[0][0] = '1';
+					}
 					l.add(b);
 				}
 			}
@@ -183,21 +190,19 @@ public class DotsAndBoxes extends SemiAlternatingGame {
 		else
 			board[0][0] = '2';
 	}
-	
+
 	/*
 	 * Updates the 0s on the board to 1s and 2s and returns true if the last play filled in a block.
 	 * Otherwise it returns false so that the next player can play. 
 	 */
-	@Override
-	public boolean playAgain(Object localBoard, int player) {
+	public boolean playAgain() {
 		boolean rv = false;
 		
-		char[][] lb = (char[][]) localBoard;
 		char[][] b = new char[boardSize][boardSize];
 		for(int r = 0; r < boardSize; r++)
 			for(int c = 0; c < boardSize; c++)
-				b[r][c] = lb[r][c];
-		
+				b[r][c] = board[r][c];
+
 		updateBoard();
 		for(int row = 0; row < boardSize; row++){
 			for(int col = 0; col < boardSize; col++){
@@ -206,13 +211,42 @@ public class DotsAndBoxes extends SemiAlternatingGame {
 				}
 			}
 		}
-		
+
 		if(rv)
 			drawBoard();
-		
+
 		return rv;
 	}
 	
+	/*
+	 * Updates the 0s on the board to 1s and 2s and returns true if the last play filled in a block.
+	 * Otherwise it returns false so that the next player can play. 
+	 */
+	@Override
+	public boolean playAgain(Object localBoard, int player) {
+		boolean rv = false;
+
+		char[][] lb = (char[][]) localBoard;
+		char[][] b = new char[boardSize][boardSize];
+		for(int r = 0; r < boardSize; r++)
+			for(int c = 0; c < boardSize; c++)
+				b[r][c] = lb[r][c];
+
+		lb = (char[][]) updateBoard(board, whoseTurn);
+		for(int row = 0; row < boardSize; row++){
+			for(int col = 0; col < boardSize; col++){
+				if(b[row][col] == '0' && (lb[row][col] == '1' || lb[row][col] == '2')){
+					rv = true;
+				}
+			}
+		}
+
+		if(rv)
+			drawBoard();
+
+		return rv;
+	}
+
 	/*
 	 * Updates the 0s on the board to 1s and 2s depending on whoseTurn it is
 	 */
@@ -288,7 +322,7 @@ public class DotsAndBoxes extends SemiAlternatingGame {
 			p1--;
 		else if(board[0][0] == '2')
 			p2--;
-		
+
 		if(p1 > p2)
 			return 1;
 		else if(p1 < p2)
@@ -308,27 +342,29 @@ public class DotsAndBoxes extends SemiAlternatingGame {
 		char[][] b = (char[][])board;
 		for(int row = 0; row < boardSize; row++){
 			for(int col = 0; col < boardSize; col++){
-				if(b[row][col] == '0'){
-					int lineCount = 0;
-					if(b[row-1][col] == '-')
-						lineCount++;
-					if(b[row+1][col] == '-')
-						lineCount++;
-					if(b[row][col-1] == '|')
-						lineCount++;
-					if(b[row][col+1] == '|')
-						lineCount++;
-					if(lineCount == 3){
-						if(whoseTurn(b) == 1)
-							w+=5;
-						else
-							w-=5;
+				if(!(row == 0 && col == 0)){
+					if(b[row][col] == '0'){
+						int lineCount = 0;
+						if(b[row-1][col] == '-')
+							lineCount++;
+						if(b[row+1][col] == '-')
+							lineCount++;
+						if(b[row][col-1] == '|')
+							lineCount++;
+						if(b[row][col+1] == '|')
+							lineCount++;
+						if(lineCount == 3){
+							if(whoseTurn(b) == 1)
+								w+=5;
+							else
+								w-=5;
+						}
 					}
+					else if(b[row][col] == '1')
+						w+=10;
+					else if(b[row][col] == '2')
+						w-=10;
 				}
-				else if(b[row][col] == '1')
-					w+=10;
-				else if(b[row][col] == '2')
-					w-=10;
 			}
 		}
 		return w;
