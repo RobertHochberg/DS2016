@@ -30,30 +30,61 @@ public class Closer
 		}
          while(!done)
 			{
-				System.out.println("\nThis is round " + round);
-				System.out.println("\nPlayer One, take your guess: ");
-				p1guess = keyboard.nextInt();
-					while(usedNumbers.contains(p1guess) || p1guess > upperBound || p1guess < 0)
-					{
-						System.out.println("\nThat move is not available, select another number: ");
-						p1guess = keyboard.nextInt();
-                  if(!usedNumbers.contains(p1guess))
-                     break;
-					}
-					
-				usedNumbers.add(p1guess);
-            board[p1guess - 1] = playerOneCharacter; 
-				
-				computerGuess = (int)Math.ceil(Math.random() * upperBound);
-					while(usedNumbers.contains(computerGuess) || computerGuess > upperBound || computerGuess < 0)
-					{
-						computerGuess = (int)Math.ceil(Math.random() * upperBound);
-                  if(!usedNumbers.contains(computerGuess))
-                     break;
-					}
-				System.out.println("\nComputer selects " + computerGuess);
-            usedNumbers.add(computerGuess);
-            board[computerGuess - 1] = playerTwoCharacter;
+               System.out.println("\nThis is round " + round);
+         
+         if(round%2!=0)
+         {
+   				System.out.println("\nPlayer One, take your guess: ");
+   				p1guess = keyboard.nextInt();
+   					while(usedNumbers.contains(p1guess) || p1guess > upperBound || p1guess < 0)
+   					{
+   						System.out.println("\nThat move is not available, select another number: ");
+   						p1guess = keyboard.nextInt();
+                     if(!usedNumbers.contains(p1guess))
+                        break;
+   					}
+   					
+   				usedNumbers.add(p1guess);
+               board[p1guess - 1] = playerOneCharacter; 
+   				
+   				computerGuess = (int)Math.ceil(Math.random() * upperBound);
+   					while(usedNumbers.contains(computerGuess) || computerGuess > upperBound || computerGuess < 0)
+   					{
+   						computerGuess = (int)Math.ceil(Math.random() * upperBound);
+                     if(!usedNumbers.contains(computerGuess))
+                        break;
+   					}
+   				System.out.println("\nComputer selects " + computerGuess);
+               usedNumbers.add(computerGuess);
+               board[computerGuess - 1] = playerTwoCharacter;
+            }
+            
+            else
+            {
+                  computerGuess = (int)Math.ceil(Math.random() * upperBound);
+   					while(usedNumbers.contains(computerGuess) || computerGuess > upperBound || computerGuess < 0)
+   					{
+   						computerGuess = (int)Math.ceil(Math.random() * upperBound);
+                     if(!usedNumbers.contains(computerGuess))
+                        break;
+   					}
+   				System.out.println("\nComputer selects " + computerGuess);
+               usedNumbers.add(computerGuess);
+               board[computerGuess - 1] = playerTwoCharacter;
+   				System.out.println("\nPlayer One, take your guess: ");
+   				p1guess = keyboard.nextInt();
+   					while(usedNumbers.contains(p1guess) || p1guess > upperBound || p1guess < 0)
+   					{
+   						System.out.println("\nThat move is not available, select another number: ");
+   						p1guess = keyboard.nextInt();
+                     if(!usedNumbers.contains(p1guess))
+                        break;
+   					}
+   					
+   				usedNumbers.add(p1guess);
+               board[p1guess - 1] = playerOneCharacter; 
+   		}
+
 				
 				 if(p1guess == num){
 		                System.out.println("\nPlayer 1 wins");
