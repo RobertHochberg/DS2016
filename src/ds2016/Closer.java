@@ -17,6 +17,7 @@ public class Closer
 	
 	public static void main(String args[])
 	{
+      boolean isCloser = false; 
 		boolean done = false;
 		Scanner keyboard = new Scanner(System.in);
 		System.out.println("What is the highest number that you want to play with?");
@@ -47,8 +48,18 @@ public class Closer
    				usedNumbers.add(p1guess);
                board[p1guess - 1] = playerOneCharacter; 
    				
-   				computerGuess = (int)Math.ceil(Math.random() * upperBound);
-   					while(usedNumbers.contains(computerGuess) || computerGuess > upperBound || computerGuess < 0)
+               if(isCloser && computerGuess > p1guess)
+                  computerGuess +=1;
+   				else if(isCloser && computerGuess < p1guess)
+                  computerGuess -= 1;
+               else if (!isCloser && p1guess < computerGuess)
+                  computerGuess = p1guess - 1;
+               else if (!isCloser && p1Guess > computerGuess)
+                  computerGuess = p1guess + 1; 
+               else
+                  computerGuess = (int)Math.ceil(Math.random() * upperBound);
+   					
+                  while(usedNumbers.contains(computerGuess) || computerGuess > upperBound || computerGuess < 0)
    					{
    						computerGuess = (int)Math.ceil(Math.random() * upperBound);
                      if(!usedNumbers.contains(computerGuess))
@@ -111,7 +122,10 @@ public class Closer
 		            if(Math.abs(num - p1guess) < Math.abs(num - computerGuess))
 		                System.out.println("\nPlayer 1 is closer");
 		            if(Math.abs(num - computerGuess) < Math.abs(num - p1guess))
+                  {
 		                System.out.println("\nComputer is closer");
+                      isCloser = true;
+                  }
                   if(Math.abs(num - computerGuess) == Math.abs(num - p1guess))
 		                System.out.println("\nBoth players are equidistant from the answer");		            
 		            
