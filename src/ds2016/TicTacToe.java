@@ -323,7 +323,11 @@ class TicTacToe extends AlternatingGame {
 	public Object getBoard(){
 		return board;
 	}
-
+	
+	public String toString(Object board){
+		int[] theBoard = (int[]) board;
+		return theBoard.toString();
+	}
 
 }
 

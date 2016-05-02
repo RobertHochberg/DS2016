@@ -66,8 +66,24 @@ class DSNode< E >{
 				rv += children.get(i).numLeaves();
 			}
 		}
-
+		
+		return rv;
+	}
+	
+	public int numNodes()
+	{
+		int rv = 0;
+		
+		if(this.numChildren == 0)
+			rv = 1;
+		else
+		{
+			for(int i = 0; i < this.numChildren; i++)
+			{
+				rv += 1 + children.get(i).numNodes();
+			}
+		}
+		
 		return rv;
 	} 
-
 }

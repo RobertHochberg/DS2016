@@ -5,12 +5,11 @@
 package ds2016;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
 class Tester{
-
+	
 	public static void main(String args[]) throws IOException{
 		Nim t = new Nim(5,5,5);
 		System.out.println("# game plays is " + t.buildTree(t.getBoard()).numLeaves());
@@ -30,7 +29,5 @@ class Tester{
 			
 			
 		}
-		System.out.println("wordList has " + wordList.getSize() + " items");
-
 	}
 }
