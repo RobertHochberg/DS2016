@@ -12,7 +12,7 @@ import java.io.IOException;
 class Tester{
 
 	public static void main(String args[]) throws IOException{
-		Nim t = new Nim();
+		Nim t = new Nim(5,5,5);
 		System.out.println("# game plays is " + t.buildTree(t.getBoard()).numLeaves());
 		//TicTacToeGUI2 t = new TicTacToeGUI2();
 		//TicTacToe t = new TicTacToe();
