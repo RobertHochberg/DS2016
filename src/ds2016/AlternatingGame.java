@@ -37,6 +37,7 @@ abstract class AlternatingGame extends TurnTakingGame {
 	 * Picks a winning move, if available.
 	 * Otherwise, pick a tie move.
 	 *
+	 * heuristic goes here
 	 */
 	void getSmartComputerMove(){
 		Object board = getBoard();
@@ -46,7 +47,7 @@ abstract class AlternatingGame extends TurnTakingGame {
 		// Assume for now 2 players
 		int winner = 3 - whoseTurn;
 		for(int i = 0; i < children.length; i++){
-			DSNode childTree = buildTree(children[i]);
+			DSNode childTree = buildTree(children[i], 15); // value of depth is set her
 			int childVal = evaluateTree(childTree);  // Recursive call
 			if(whoseTurn == 1){
 				if(winner == 2 && childVal != 2){

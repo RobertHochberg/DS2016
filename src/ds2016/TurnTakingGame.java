@@ -19,37 +19,39 @@ abstract class TurnTakingGame{
 	abstract int  whoWon(Object board);
 	abstract String toString(Object board);
 
-	
+
 	HashMap<String, DSNode> treeMap = new HashMap<String, DSNode>();
-	
+
 	/**
 	 * Builds a game tree and returns the DSNode that 
 	 * is the root of that tree
 	 */
-	DSNode buildTree(Object board){
+	DSNode buildTree(Object board, int depth){
 		String boardString = toString(board);
-		
+
 		// Check to see if we've already processed this string.
 		if(treeMap.containsKey(boardString)){
 			return treeMap.get(boardString);
 		}
-		
+
 		// root is the DSNode we we return
 		DSNode root = new DSNode< Object >();
 		//root.board = board; // bad, violates encapsulation
 		root.setBoard(board); // good
 
 		// We get all boards obtainable from this board in 1 move
-		Object[] ch = getChildren(board);
-		// System.out.println(ch.length);
-		for(int i = 0; i < ch.length; i++){
-			DSNode childNode = buildTree(ch[i]);
-			root.addChild(childNode);
+		if (depth != 0) {
+			Object[] ch = getChildren(board);
+			// System.out.println(ch.length);
+			for(int i = 0; i < ch.length; i++){
+				DSNode childNode = buildTree(ch[i], depth - 1);
+				root.addChild(childNode);
+			}
 		}
-		
+
 		// Save this work in case we see this board again.
 		treeMap.put(boardString, root);
-		
+
 		return root;
 	}
 
@@ -72,6 +74,10 @@ abstract class TurnTakingGame{
 		int whoseTurn = whoseTurn(root.getBoard());
 		int winner = 3 - whoseTurn;
 		for(int i = 0; i < root.getNumChildren(); i++){
+			evaluateHeuristic((DSNode)(root.getChildren().get(i))); 
+			/**
+			 * code for evaluating complete tree
+			 * 
 			evaluateTree((DSNode)(root.getChildren().get(i)));  // Recursive call
 			if(whoseTurn == 1){
 				if(winner == 2)
@@ -87,11 +93,13 @@ abstract class TurnTakingGame{
 					winner = 2;
 			}
 		} // end of looping over children
-		root.setWinner(winner);
-		return winner;
+			 */
+			root.setWinner(winner);
+			return winner;
+		}
 	}
 
 	// returns an array of boards
 	abstract Object[] getChildren(Object board);
-
+	abstract int evaluateHeuristic(DSNode board);
 }

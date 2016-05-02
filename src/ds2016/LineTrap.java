@@ -2,6 +2,10 @@
  * draw lines until you can't.
  * rowLocation++ moves up/down; colLocation moves left/right
  * consider having non-square grid; would require another field
+ * 
+ * the computer does not play to win
+ * considering that it doesn't play to win even if it has first turn,
+ * I think whoseTurn or equivalent must be messed up somewhere
  */
 
 package src.ds2016;
@@ -20,9 +24,6 @@ class LineTrap extends AlternatingGame{
 	char USEDDOT = 'O';
 	char MARKER = 'X';
 	String humanMove = "";
-	// these exist so that board[1][1] can hold whose turn
-	char pOne = 1;
-	char pTwo = 2;
 
 	Scanner scanner;
 
@@ -45,7 +46,7 @@ class LineTrap extends AlternatingGame{
 		rowLocation = (int)Math.floor((double)(boardSize)/2);
 		colLocation = (int)Math.floor((double)(boardSize)/2);
 
-		//draws the initial blank board
+		//draws the initial blank board and sets board[1][1] to turn
 		for(int row = 0; row < boardSize; row++){
 			for(int col = 0; col < boardSize; col++){
 				if (row%2 == 0 && col%2 == 0) {
@@ -53,14 +54,12 @@ class LineTrap extends AlternatingGame{
 				}
 			}
 		}
+		board[1][1] = 1;
 
 		//places the marker in the center of the board
 		board[rowLocation][colLocation] = MARKER;
 
-		//whoseTurn is tracked through board[1][1]
-		board[1][1] = pOne;
-
-		whoseTurn = (int)board[1][1];
+		whoseTurn = 1;
 	}
 
 	public void drawBoard(){
@@ -78,7 +77,26 @@ class LineTrap extends AlternatingGame{
 
 	@Override
 	void setBoard(Object nb){
-		board = (char[][])nb;
+		char[][] localBoard = (char[][])nb;
+		for(int row = 0; row < boardSize; row++){
+			for(int col = 0; col < boardSize; col++){
+				board[row][col] = localBoard[row][col];
+			}
+		}
+
+		//finds MARKER location on board[][] to update rowLocation and colLocation
+		markerfinder:
+			for(int row = 0; row < boardSize; row++){
+				for(int col = 0; col < boardSize; col++){
+					if (board[row][col] == MARKER) {
+						rowLocation = row;
+						colLocation = col;
+						break markerfinder;
+					} else if (board[row][col] != MARKER) {
+						continue;
+					}
+				}
+			}
 	}
 
 	@Override
@@ -111,10 +129,10 @@ class LineTrap extends AlternatingGame{
 			getLeftMove();
 		}
 
+		whoseTurn = 3 - whoseTurn;
 		if (whoseTurn == 1) {
-			board[1][1] = pTwo;
-		} else board[1][1] = pOne;
-		whoseTurn = (int)board[1][1];
+			board[1][1] = 1;
+		} else board[1][1] = 2;
 	}
 
 	void getUpMove(){
@@ -172,11 +190,15 @@ class LineTrap extends AlternatingGame{
 	@Override
 	void getComputerMove(){
 		getSmartComputerMove();
+		if (whoseTurn == 1) {
+			board[1][1] = 1;
+		} else board[1][1] = 2;
 	}
 
 	@Override
+	//this method is somehow returning 50 when called by getSmartComputerMove()
 	int whoseTurn(Object localBoard){
-		return whoseTurn;
+		return (int)((char[][])localBoard)[1][1];
 	}
 
 	@Override
@@ -235,24 +257,19 @@ class LineTrap extends AlternatingGame{
 	}
 
 	@Override
-	int whoWon(Object board){
-		return 3 - whoseTurn;
+	int whoWon(Object localBoard){
+		return 3 - whoseTurn(localBoard);
 	}
 
-	/**
-	 * get a child by moving u/d/l/r, add the child to the array, repeat
-	 * repeat using recursion and put moves into separate methods
-	 * repeat using for loop, get() from DSArrayList and DSArrayList length, call getChildren() for each item
-	 */
 	@Override
 	Object[] getChildren(Object b){
 		char[][] parent = (char[][])b;
-		int childWhoseTurn = 3 - parent[1][1];
+		int childWhoseTurn = 3 - (int)parent[1][1];
 		DSArrayList<Object[]> childrenHolder = new DSArrayList<Object[]>();
 		int localRowLocation = 0;
 		int localColLocation = 0;
 
-		//finds the location of MARKER on parent[][]
+		//finds MARKER location on parent[][]
 		markerfinder:
 			for(int row = 0; row < boardSize; row++){
 				for(int col = 0; col < boardSize; col++){
@@ -266,84 +283,88 @@ class LineTrap extends AlternatingGame{
 				}
 			}
 
-		if (localRowLocation != 0) {
+		//up move
+		if (localRowLocation != 0 && parent[localRowLocation - 1][localColLocation] != VERTICALLINE) {
 			char[][] child = new char[boardSize][boardSize];
-			int localRL = rowLocation;
-			int localCL = colLocation;
-			if (parent[localRL - 1][localCL] != VERTICALLINE) {
-				for(int row = 0; row < boardSize; row++){
-					for(int col = 0; col < boardSize; col++){
-						child[row][col] = parent[row][col];
-					}
+			int lRL = localRowLocation;
+			int lCL = localColLocation;
+			for(int row = 0; row < boardSize; row++){
+				for(int col = 0; col < boardSize; col++){
+					child[row][col] = parent[row][col];
 				}
-				child[localRL - 1][localCL] = VERTICALLINE;
-				child[localRL][localCL] = USEDDOT;
-				localRL = localRL - 2;
-				child[localRL][localCL] = MARKER;
-				child[1][1] = (char)(3 - childWhoseTurn);
-				childrenHolder.add(child);
 			}
+			if (childWhoseTurn == 1) {
+				child[1][1] = 1;
+			} else child[1][1] = 2;
+
+			child[lRL - 1][lCL] = VERTICALLINE;
+			child[lRL][lCL] = USEDDOT;
+			lRL = lRL - 2;
+			child[lRL][lCL] = MARKER;
+			childrenHolder.add(child);
 		}
 
-		if (localRowLocation != 2*numGridPoints-2) {
+		//down move
+		if (localRowLocation != 2*numGridPoints-2 && parent[localRowLocation + 1][localColLocation] != VERTICALLINE) {
 			char[][] child = new char[boardSize][boardSize];
-			int localRL = rowLocation;
-			int localCL = colLocation;
-			if (parent[localRL + 1][localCL] != VERTICALLINE) {
-				for(int row = 0; row < boardSize; row++){
-					for(int col = 0; col < boardSize; col++){
-						child[row][col] = parent[row][col];
-					}
+			int lRL = localRowLocation;
+			int lCL = localColLocation;
+			for(int row = 0; row < boardSize; row++){
+				for(int col = 0; col < boardSize; col++){
+					child[row][col] = parent[row][col];
 				}
-				child[localRL + 1][localCL] = VERTICALLINE;
-				child[localRL][localCL] = USEDDOT;
-				localRL = localRL + 2;
-				child[localRL][localCL] = MARKER;
-				child[1][1] = (char)(3 - childWhoseTurn);
-				childrenHolder.add(child);
 			}
+			if (childWhoseTurn == 1) {
+				child[1][1] = 1;
+			} else child[1][1] = 2;
+
+			child[lRL + 1][lCL] = VERTICALLINE;
+			child[lRL][lCL] = USEDDOT;
+			lRL = lRL + 2;
+			child[lRL][lCL] = MARKER;
+			childrenHolder.add(child);
 		}
 
-		if (localColLocation != 0) {
+		//right move
+		if (localColLocation != 0 && parent[localRowLocation][localColLocation - 1] != HORIZONTALLINE) {
 			char[][] child = new char[boardSize][boardSize];
-			int localRL = rowLocation;
-			int localCL = colLocation;
-			if (parent[localRL][localCL - 1] != HORIZONTALLINE) {
-				for(int row = 0; row < boardSize; row++){
-					for(int col = 0; col < boardSize; col++){
-						child[row][col] = parent[row][col];
-					}
+			int lRL = localRowLocation;
+			int lCL = localColLocation;
+			for(int row = 0; row < boardSize; row++){
+				for(int col = 0; col < boardSize; col++){
+					child[row][col] = parent[row][col];
 				}
-				child[localRL][localCL - 1] = HORIZONTALLINE;
-				child[localRL][localCL] = USEDDOT;
-				localCL = localCL - 2;
-				child[localRL][localCL] = MARKER;
-				child[1][1] = (char)(3 - childWhoseTurn);
-				childrenHolder.add(child);
 			}
+			if (childWhoseTurn == 1) {
+				child[1][1] = 1;
+			} else child[1][1] = 2;
+
+			child[lRL][lCL - 1] = HORIZONTALLINE;
+			child[lRL][lCL] = USEDDOT;
+			lCL = lCL - 2;
+			child[lRL][lCL] = MARKER;
+			childrenHolder.add(child);
 		}
 
-		if (localColLocation != 2*numGridPoints-2) {
+		//down move
+		if (localColLocation != 2*numGridPoints-2 && parent[localRowLocation][localColLocation + 1] != HORIZONTALLINE) {
 			char[][] child = new char[boardSize][boardSize];
-			int localRL = rowLocation;
-			int localCL = colLocation;
-			if (parent[localRL][localCL + 1] != HORIZONTALLINE) {
-				for(int row = 0; row < boardSize; row++){
-					for(int col = 0; col < boardSize; col++){
-						child[row][col] = parent[row][col];
-					}
+			int lRL = localRowLocation;
+			int lCL = localColLocation;
+			for(int row = 0; row < boardSize; row++){
+				for(int col = 0; col < boardSize; col++){
+					child[row][col] = parent[row][col];
 				}
-				child[localRL][localCL + 1] = HORIZONTALLINE;
-				child[localRL][localCL] = USEDDOT;
-				localCL = localCL + 2;
-				child[localRL][localCL] = MARKER;
-				child[1][1] = (char)(3 - childWhoseTurn);
-				childrenHolder.add(child);
 			}
-		}
+			if (childWhoseTurn == 1) {
+				child[1][1] = 1;
+			} else child[1][1] = 2;
 
-		for(int i = 0; i < childrenHolder.getSize(); i++){
-			getChildren(childrenHolder.get(i));
+			child[lRL][lCL + 1] = HORIZONTALLINE;
+			child[lRL][lCL] = USEDDOT;
+			lCL = lCL + 2;
+			child[lRL][lCL] = MARKER;
+			childrenHolder.add(child);
 		}
 
 		return childrenHolder.toArray();
@@ -363,12 +384,15 @@ class LineTrap extends AlternatingGame{
 					stringBoard[i][j] = "v";
 				} else if (b[i][j] == HORIZONTALLINE) {
 					stringBoard[i][j] = "h";
-				} else stringBoard[i][j] = "";
+				} else if (b[i][j] == MARKER) {
+					stringBoard[i][j] = "m";
+				} else if (b[i][j] == 1) {
+					stringBoard[1][1] = "1";
+				} else if (b[i][j] == 2) {
+					stringBoard[1][1] = "2";
+				} else stringBoard[i][j] = " ";
 			}
 		}
-		if (b[1][1] == pOne) {
-			stringBoard[1][1] = "one";
-		} else stringBoard[1][1] = "two";
 
 		for(int i = 0; i < boardSize; i++){
 			for(int j = 0; j < boardSize; j++){
@@ -377,5 +401,53 @@ class LineTrap extends AlternatingGame{
 		}
 
 		return boardAsString;
+	}
+
+	@Override
+	int evaluateHeuristic(DSNode board) {
+		if (rowLocation == 0 && colLocation == 0) {
+			//upper left corner
+			if (board[rowLocation + 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation + 1] == HORIZONTALLINE) {
+				
+			}
+		} else if (rowLocation == 0 && colLocation == 2*numGridPoints-2) {
+			//upper right corner
+			if (board[rowLocation + 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation - 1] == HORIZONTALLINE) {
+				
+			}
+		} else if (rowLocation == 2*numGridPoints-2 && colLocation == 0) {
+			//lower left corner
+			if (board[rowLocation - 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation + 1] == HORIZONTALLINE) {
+				
+			}
+		} else if (rowLocation == 2*numGridPoints-2 && colLocation == 2*numGridPoints-2) {
+			//lower right corner
+			if (board[rowLocation - 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation - 1] == HORIZONTALLINE) {
+				isGameOver = true;
+			}
+		} else if (rowLocation == 0) {
+			//upper edge
+			if (board[rowLocation + 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation - 1] == HORIZONTALLINE && board[rowLocation][colLocation + 1] == HORIZONTALLINE) {
+				
+			}
+		} else if (rowLocation == 2*numGridPoints-2) {
+			//lower edge
+			if (board[rowLocation - 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation - 1] == HORIZONTALLINE && board[rowLocation][colLocation + 1] == HORIZONTALLINE) {
+				
+			}
+		} else if (colLocation == 0) {
+			//left edge
+			if (board[rowLocation - 1][colLocation] == VERTICALLINE && board[rowLocation + 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation + 1] == HORIZONTALLINE) {
+				
+			}
+		} else if (colLocation == 2*numGridPoints-2) {
+			//right edge
+			if (board[rowLocation - 1][colLocation] == VERTICALLINE && board[rowLocation + 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation - 1] == VERTICALLINE) {
+				isGameOver = true;
+			}
+		} else if (board[rowLocation - 1][colLocation] == VERTICALLINE && board[rowLocation + 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation - 1] == HORIZONTALLINE && board[rowLocation][colLocation + 1] == HORIZONTALLINE) {
+			//middle of the board
+			
+		} else
 	}
 }
