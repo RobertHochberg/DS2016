@@ -35,6 +35,7 @@ public class Closer
          
          if(round%2!=0)
          {
+               System.out.println("\nNumbers already used: " + usedNumbers);
    				System.out.println("\nPlayer 1, take your guess: ");
    				p1guess = keyboard.nextInt();
    					while(usedNumbers.contains(p1guess) || p1guess > upperBound || p1guess < 0)
@@ -116,6 +117,7 @@ public class Closer
    				System.out.println("\nComputer selects " + computerGuess);
                usedNumbers.add(computerGuess);
                board[computerGuess - 1] = playerTwoCharacter;
+               System.out.println("\nNumbers already used: " + usedNumbers);
    				System.out.println("\nPlayer 1, take your guess: ");
    				p1guess = keyboard.nextInt();
    					while(usedNumbers.contains(p1guess) || p1guess > upperBound || p1guess < 0)
