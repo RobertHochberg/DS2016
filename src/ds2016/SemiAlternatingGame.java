@@ -91,10 +91,8 @@ abstract class SemiAlternatingGame extends TurnTakingGame {
 		// Assume for now 2 players
 		int winner = whoseTurn == 1 ? -1000000 : 1000000;
 		for(int i = 0; i < children.length; i++){
-			System.out.printf("Winner = %d, turn = %d,  i = %d, 00 = %d\n", 
-					winner, whoseTurn, i, whoseTurn(children[i]));
 			DSNode childTree = buildTree(children[i], 3);
-			int childVal = evaluateTreeHeuristic(childTree);  // Recursive call
+			int childVal = evaluateTreeHeuristic(childTree);
 			if(whoseTurn == 1){
 				if(childVal > winner){
 					winner = childVal;
@@ -105,6 +103,7 @@ abstract class SemiAlternatingGame extends TurnTakingGame {
 					winner = childVal;
 					newBoard = children[i];
 				}
+			//System.out.printf("Winner = %d, turn = %d,  i = %d, 00 = %d\n", winner, whoseTurn, i, whoseTurn(children[i]));
 		} // end of looping over children
 
 		if(winner > 0)

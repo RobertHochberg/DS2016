@@ -101,8 +101,8 @@ public class DotsAndBoxes extends SemiAlternatingGame {
 					else
 						b[row][col] = '|';
 					
-					if(!playAgain(b, b[0][0])){
-						if(b[0][0] == '1')
+					if(!playAgain(b, whoseTurn(b))){
+						if(whoseTurn(b) == 1)
 							b[0][0] = '2';
 						else
 							b[0][0] = '1';
@@ -343,7 +343,7 @@ public class DotsAndBoxes extends SemiAlternatingGame {
 	@Override
 	int heuristicEvaluation(Object board) {
 		int w = 0;
-		char[][] b = (char[][])board;
+		char[][] b = (char[][])updateBoard(board, 3-whoseTurn(board));
 		for(int row = 0; row < boardSize; row++){
 			for(int col = 0; col < boardSize; col++){
 				if(!(row == 0 && col == 0)){
@@ -351,17 +351,17 @@ public class DotsAndBoxes extends SemiAlternatingGame {
 						int lineCount = 0;
 						if(b[row-1][col] == '-')
 							lineCount++;
-						if(b[row+1][col] == '-')
-							lineCount++;
 						if(b[row][col-1] == '|')
 							lineCount++;
 						if(b[row][col+1] == '|')
 							lineCount++;
+						if(b[row+1][col] == '-')
+							lineCount++;
 						if(lineCount == 3){
-							if(whoseTurn(b) == '1')
-								w-=5;
-							else
+							if(whoseTurn(b) == 1)
 								w+=5;
+							else
+								w-=5;
 						}
 					}
 					else if(b[row][col] == '1')
