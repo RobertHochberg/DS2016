@@ -42,7 +42,7 @@ abstract class SemiAlternatingGame extends TurnTakingGame {
 		Object board = getBoard();
 		Object[] children = getChildren(board);
 		Object newBoard = children[0];
-		
+
 		// Assume for now 2 players
 		int winner = 3 - whoseTurn;
 		for(int i = 0; i < children.length; i++){
@@ -67,15 +67,15 @@ abstract class SemiAlternatingGame extends TurnTakingGame {
 					newBoard = children[i];
 				}
 		} // end of looping over children
-		
+
 		if(winner != 0)
 			System.out.println("Player " + winner + " has the win!");
-		
+
 		// board = newBoard; // This won't work right.
 		// We make our move by copying the newBoard into board
 		setBoard(newBoard);
 	}
-	
+
 	/**
 	 * Gets the computer player's move
 	 *
@@ -87,10 +87,12 @@ abstract class SemiAlternatingGame extends TurnTakingGame {
 		Object board = getBoard();
 		Object[] children = getChildren(board);
 		Object newBoard = children[0];
-		
+
 		// Assume for now 2 players
-		int winner = 3 - whoseTurn;
+		int winner = whoseTurn == 1 ? -1000000 : 1000000;
 		for(int i = 0; i < children.length; i++){
+			System.out.printf("Winner = %d, turn = %d,  i = %d, 00 = %d\n", 
+					winner, whoseTurn, i, whoseTurn(children[i]));
 			DSNode childTree = buildTree(children[i], 3);
 			int childVal = evaluateTreeHeuristic(childTree);  // Recursive call
 			if(whoseTurn == 1){
@@ -104,12 +106,12 @@ abstract class SemiAlternatingGame extends TurnTakingGame {
 					newBoard = children[i];
 				}
 		} // end of looping over children
-		
+
 		if(winner > 0)
 			System.out.println("Player 1 has the win!");
 		else if(winner < 0)
 			System.out.println("Player 2 has the win!");
-		
+
 		// board = newBoard; // This won't work right.
 		// We make our move by copying the newBoard into board
 		setBoard(newBoard);
@@ -125,7 +127,7 @@ abstract class SemiAlternatingGame extends TurnTakingGame {
 		else
 			System.out.printf("Player %d won the game\n", winner);
 	}
-	
+
 	abstract boolean playAgain(Object b, int p);
 	abstract Object updateBoard(Object localBoard, int player);
 	abstract void setBoard(Object nb);

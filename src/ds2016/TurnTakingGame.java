@@ -141,7 +141,7 @@ abstract class TurnTakingGame{
 
 		// Assume for now 2 players
 		int whoseTurn = whoseTurn(root.getBoard());
-		int winner = 3 - whoseTurn;
+		int winner = whoseTurn == 1 ? -1000000 : 1000000;
 		for(int i = 0; i < root.getNumChildren(); i++){
 			evaluateTreeHeuristic((DSNode)(root.getChildren().get(i)));  // Recursive call
 			int w = ((DSNode) root.getChildren().get(i)).getWinner();

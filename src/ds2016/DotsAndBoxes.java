@@ -10,7 +10,7 @@ import java.util.Scanner;
 public class DotsAndBoxes extends SemiAlternatingGame {
 
 	char[][] board;
-	int boardSize = 5;  //(boardSize + 1) / 2 = the number of dots on each row and column
+	int boardSize = 7;  //(boardSize + 1) / 2 = the number of dots on each row and column
 	byte difficulty = 3; // 1 = getDumbComputerMove(), 2 = getSmartComputerMove(), 3 = getHeuristicComputerMove()
 	Scanner scan = new Scanner(System.in);
 
@@ -29,7 +29,7 @@ public class DotsAndBoxes extends SemiAlternatingGame {
 				}
 			}
 		}
-		board[0][0] = '1';
+		board[0][0] = (char)1;
 	}
 
 	@Override
@@ -52,7 +52,11 @@ public class DotsAndBoxes extends SemiAlternatingGame {
 			}
 		}
 		return count%2+1;*/
-		return ((char[][])localBoard)[0][0];
+		char c = ((char[][])localBoard)[0][0];
+		if(c == '1')
+			return 1;
+		else
+			return 2;
 	}
 
 	@Override
@@ -107,7 +111,7 @@ public class DotsAndBoxes extends SemiAlternatingGame {
 				}
 			}
 		}
-		System.out.println(l);
+		//System.out.println(l);
 		return l.toArray();
 	}
 
@@ -169,9 +173,9 @@ public class DotsAndBoxes extends SemiAlternatingGame {
 		}while(playAgain(board, whoseTurn) && !isGameOver());
 		whoseTurn = 3 - whoseTurn;
 		if(whoseTurn == 1)
-			board[0][0] = '1';
+			board[0][0] = (char)1;
 		else
-			board[0][0] = '2';
+			board[0][0] = (char)2;
 	}
 
 	@Override
@@ -186,9 +190,9 @@ public class DotsAndBoxes extends SemiAlternatingGame {
 		}while(playAgain(board, whoseTurn) && !isGameOver());
 		whoseTurn = 3 - whoseTurn;
 		if(whoseTurn == 1)
-			board[0][0] = '1';
+			board[0][0] = (char)1;
 		else
-			board[0][0] = '2';
+			board[0][0] = (char)2;
 	}
 
 	/*
@@ -318,9 +322,9 @@ public class DotsAndBoxes extends SemiAlternatingGame {
 					p2++;
 			}
 		}
-		if(board[0][0] == '1')
+		if(board[0][0] == (char)1)
 			p1--;
-		else if(board[0][0] == '2')
+		else if(board[0][0] == (char)2)
 			p2--;
 
 		if(p1 > p2)
@@ -354,10 +358,10 @@ public class DotsAndBoxes extends SemiAlternatingGame {
 						if(b[row][col+1] == '|')
 							lineCount++;
 						if(lineCount == 3){
-							if(whoseTurn(b) == 1)
-								w+=5;
-							else
+							if(whoseTurn(b) == '1')
 								w-=5;
+							else
+								w+=5;
 						}
 					}
 					else if(b[row][col] == '1')

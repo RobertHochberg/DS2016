@@ -1,4 +1,4 @@
-package ds2015;
+package ds2016;
 
 /* *
  * The game of Othello
