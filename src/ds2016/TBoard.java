@@ -1,5 +1,8 @@
 package ds2016;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class TBoard 
@@ -48,18 +51,60 @@ public class TBoard
 	 * @param filepath
 	 */
 	
-	public void loadField(String filepath)
+	public char[][] loadField(String filepath)
 	{
-		// placeholder
-		return;
+		ArrayList<ArrayList<Character>> field = new ArrayList<>();
+		
+		boolean abort = false;
+		
+		try { 
+			FileReader f = new FileReader(filepath);
+			BufferedReader reader = new BufferedReader(f);
+			String line = reader.readLine();
+			while (line != null) {	
+				String[] parts = line.split(" ");
+				field.add(new ArrayList<>());
+				for(int i = 0; i < parts.length; i++){
+					if(parts[i].length() > 0)
+						field.get(field.size()-1).add(parts[i].toCharArray()[0]);
+				}
+				line = reader.readLine();
+			}
+			reader.close();
+		} catch (IOException x) {
+			System.err.format("IOException: %s\n", x);
+			abort = true;
+		}
+		
+		if(abort) return new char[0][0];
+		
+		char[][] rv = new char[field.size()][field.get(0).size()];
+		
+		for(int x = 0; x < field.size(); x++)
+		{
+			ArrayList<Character> line = field.get(x);
+			for(int y = 0; y < line.size(); y++)
+			{
+				char c = line.get(y);
+				// 0 means a blank space
+				if(c == '0')
+					rv[x][y] = Tactics.BLANK_SPACE;
+				else
+					rv[x][y] = c;
+			}
+		}
+		
+		return rv;
 	}
 	
-	public void nextTurn(){
+	public int nextTurn(){
 		this.whoseTurn = (this.whoseTurn == 1)? 2 : 1;
+		
+		return whoseTurn;
 	}
 	
 	public int whoIsNext(){
-		return 3 - this.whoseTurn;
+		return (this.whoseTurn == 1)? 2 : 1;
 	}
 	
 	public boolean isBlank(Coord pos)
@@ -86,34 +131,47 @@ public class TBoard
 		DSArrayList<TUnit> p1units = new DSArrayList<TUnit>();
 		DSArrayList<TUnit> p2units = new DSArrayList<TUnit>();
 		
-		// copy the arrays to make them safe to iterate through while removing things from the original array
 		for(int i = 0; i < player1Units.getSize(); i++)
-			p1units.add(player1Units.get(i));
+			if(!player1Units.get(i).isDead())
+				p1units.add(player1Units.get(i));
 		
 		for(int i = 0; i < player2Units.getSize(); i++)
-			p2units.add(player2Units.get(i));
+			if(!player2Units.get(i).isDead())
+				p2units.add(player2Units.get(i));
+		
+		player1Units = p1units;
+		player2Units = p2units;
+		
+	}
+	
+	public int howMuchOverwatch(TUnit unit, Coord targetPos, DSArrayList<TUnit> enemyList)
+	{
+	
+		int amount = 0;
 		
 		
-		// Combine both lists into a stacked list so that we can iterate through it
-		ArrayList<DSArrayList<TUnit>> punits = new ArrayList<DSArrayList<TUnit>>();
-		
-		punits.add(p1units);
-		punits.add(p2units);
-		
-		// for every list of units inside punits...
-		int z = 0;
-		for(DSArrayList<TUnit> unitList: punits)
-		{			
-			for(int i = 0; i < unitList.getSize(); i++)
+		if(!targetPos.sameAs(unit.getPos()))
+			for(int i = 0; i < enemyList.getSize(); i++)
 			{
-				unit = unitList.get(i);
-				
-				// playerUnits is a list of lists; get the appropriate list and remove the specified unit
-				if(unit.getHP() <= 0)
-					playerUnits.get(z).remove(i);
+				TUnit enemy = enemyList.get(i);
+				if(enemy.isDead())
+					continue;
+				if(enemy.isInFiringRange(unit.getPos()) && this.lineOfSight(enemy.getPos(), unit.getPos()))
+					amount++;
+				else
+				{
+					Coord oldPos = new Coord(unit.getPos().getX(), unit.getPos().getY());
+					unit.moveTo(targetPos);
+					
+					if(enemy.isInFiringRange(unit.getPos()) && this.lineOfSight(enemy.getPos(), unit.getPos()))
+						amount++;
+					
+					unit.moveTo(oldPos);
+				}
 			}
-			z++;
-		}
+		
+		return amount;
+		
 	}
 	
 	public boolean anyUnitInFiringRange(Coord pos)
@@ -127,6 +185,8 @@ public class TBoard
 			{
 				TUnit u = theArray.get(i);
 				rv = rv || u.isInFiringRange(pos);
+				if(u.isDead())
+					continue;
 				
 				// if at least one unit is in range, we know to return true
 				if(rv)
@@ -194,7 +254,24 @@ public class TBoard
 		
 		rv.addAll(spaces);
 		
-		return rv;
+		ArrayList<Coord> lastRv = new ArrayList<Coord>();
+		
+		for(Coord space : rv)
+		{
+			boolean alreadyAdded = false;
+			for(Coord other : lastRv)
+			{
+				if(space.sameAs(other))
+				{
+					alreadyAdded = true;
+					break;
+				}
+			}
+			if(!alreadyAdded)
+				lastRv.add(space);
+		}
+		
+		return lastRv;
 	}
 	
 	public boolean lineOfSight(Coord pos1, Coord pos2)
@@ -210,6 +287,11 @@ public class TBoard
 		d = pos2.getY();
 		
 		if((a == c && b == d))
+			return true;
+		
+		boolean adjacent = (Math.max(Math.abs(a-c), Math.abs(b-d)) == 1);
+		
+		if(adjacent)
 			return true;
 		
 		out:
@@ -238,6 +320,7 @@ public class TBoard
 							Math.sqrt(Math.pow(c - a, 2) + Math.pow(d - b, 2)));
 					
 					int intDist = (int) Math.ceil(dist); // convert to int
+					
 					
 					/*
 					if(Tactics.DEBUG_MESSAGES)

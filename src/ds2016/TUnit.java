@@ -3,9 +3,9 @@ package ds2016;
 public class TUnit 
 {
 	
-	public final static String[] maleNameList = {"Cosmos", "Damien", "William", "Gunther", "Vance", "Naruhoudo", "Tanaka", "Bob", "Simon"};
-	public final static String[] femaleNameList ={"Aerith", "Tomoko", "Karin", "Natalie", "Cassandra", "Artemis", "Venus", "Nia"};
-	public final static String[] lastNameList ={"Grant", "Nova", "Yoshimori", "Yamato", "Law", "Judge", "Pope", "Spencer", "Lancaster"};
+	public final static String[] MALE_NAMES = {"Cosmos", "Damien", "William", "Gunther", "Vance", "Naruhoudo", "Tanaka", "Bob", "Simon"};
+	public final static String[] FEMALE_NAMES ={"Aerith", "Tomoko", "Karin", "Natalie", "Cassandra", "Artemis", "Venus", "Nia"};
+	public final static String[] LAST_NAMES ={"Grant", "Nova", "Yoshimori", "Yamato", "Law", "Judge", "Pope", "Spencer", "Lancaster"};
 	
 	public final static int HP       = 0;
 	public final static int AIM      = 1;
@@ -20,6 +20,10 @@ public class TUnit
 	public final static int NUM_STATS = 9;
 	
 	String name;
+	String firstName;
+	String lastName;
+	
+	char gender;
 	
 	boolean overwatchActive;
 	boolean hunkerdownActive;
@@ -46,13 +50,26 @@ public class TUnit
 	uStats[MOVEMENT] = 4;
 	uStats[ARMOR]    = 0;
 	uStats[DEFENSE]  = 0;
-	uStats[CRIT]     = 20;
+	uStats[CRIT]     = 10;
 	uStats[POWER]    = 3;
-	uStats[RANGE]    = 6;
+	uStats[RANGE]    = 5;
 	uStats[PROX]     = 30; // positive means bonus when getting close, negative means penalty when getting close
 	
 	totalActions = 10;
 	remainingActions = totalActions;
+	
+	int rand = Tactics.randRange(0, 100);
+	
+	gender = (rand <= 50)? 'M' : 'F';
+	
+	String[] nameList = (gender == 'M')? MALE_NAMES : FEMALE_NAMES;
+	
+	firstName = nameList[Tactics.randRange(0,  nameList.length - 1)];
+	
+	lastName = LAST_NAMES[Tactics.randRange(0,  LAST_NAMES.length - 1)];
+	
+	name = firstName + " " + lastName;
+	
 	}
 	
 	public int getStat(int which)
@@ -107,10 +124,7 @@ public class TUnit
 	
 	public boolean isDead()
 	{
-		boolean rv = false;
-		if(damage >= uStats[HP])
-			rv = true;
-		return rv;
+		return (this.getHP() <= 0);
 	}
 	
 	public boolean isInFiringRange(Coord pos)

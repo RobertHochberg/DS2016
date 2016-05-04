@@ -63,4 +63,8 @@ public class Coord
 		return (other.getX() == x && other.getY() == y);
 	}
 	
+	@Override public String toString(){
+		return "(" + this.x + ", " + this.y + ")";
+	}
+	
 }

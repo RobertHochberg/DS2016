@@ -1,6 +1,12 @@
 package ds2016;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Scanner;
 
 public class Tactics extends AlternatingGame 
@@ -26,7 +32,7 @@ public class Tactics extends AlternatingGame
 	public final static String MSG_OVERWATCHING
 											  = "%s waits for enemy movement.%n";
 	public final static String MSG_OVERWATCH_REMOVED
-											  = "%s lost their concentration!";
+											  = "%s lost their concentration!%n";
 	public final static String MSG_HUNKERDOWN = "%s makes the most of the cover.%n";
 	public final static String MSG_HUNKERFAIL = "Can't hunker down without cover!%n";
 	
@@ -51,10 +57,17 @@ public class Tactics extends AlternatingGame
 	public final static int     HALF_COVER_BONUS = 20;
 	
 	// AI Config
-	public final static int     AI_FULL_COVER_VALUE =  50;
-	public final static int     AI_HALF_COVER_VALUE =  25;
-	public final static int     AI_FLANK_VALUE      = 100;
-	public final static int     AI_FLANKED_VALUE    = -50;
+	public final static int     AI_COVER_VALUE 		=  10;
+	public final static int     AI_FLANK_VALUE      =  50;
+	public final static int     AI_FLANKED_VALUE    = -20;
+	public final static int     AI_WOULD_TRIGGER_OVERWATCH_VALUE
+													= -20;
+	// If aim is below this value, pick another action other than shooting
+	public final static int     AI_AIM_MINIMUM      = 50;
+	// Multiply crit chance times this to find the value of crit chance
+	public final static double  AI_CRIT_VALUE       = .7;
+	// If a flank shot is further away than this, don't go for it above other moves
+	public final static int     AI_MAX_FLANK_DIST   = 6;
 	
 	// Console Output Chars
 	
@@ -65,16 +78,24 @@ public class Tactics extends AlternatingGame
 	public final static char    FULL_COVER  = '=';
 	public final static char    VALID_MOVE  = '+';
 	
+	public final static String  AI_LOG_FILEPATH = "c:/users/phyro/documents/tactics_ai_dump.log";
+	
 	// Instance Variables
 	
 	TBoard theBoard;
 	
-	// false is computer, true is human
-	boolean[] isHuman = {false, true, true};
+	public static void main(String[] args)
+	{
+		Tactics t = new Tactics();
+		
+		t.playGame();
+		
+	}
 	
 	public Tactics(){
 		theBoard = new TBoard(10, 10);
 		// Test Defaults
+		/*
 		theBoard.field[2][4] = Tactics.FULL_COVER;
 		theBoard.field[2][5] = Tactics.FULL_COVER;
 		theBoard.field[2][6] = Tactics.FULL_COVER;
@@ -90,12 +111,17 @@ public class Tactics extends AlternatingGame
 		theBoard.field[6][3] = Tactics.HALF_COVER;
 		theBoard.field[6][8] = Tactics.HALF_COVER;
 		theBoard.field[6][9] = Tactics.HALF_COVER;
+		*/
+		
+		theBoard.field = theBoard.loadField("c:/users/phyro/documents/field0.fld");
 		
 		// Add Units
 		theBoard.player1Units.add(new TUnit());
 		theBoard.player1Units.add(new TUnit());
 		theBoard.player1Units.add(new TUnit());
+		theBoard.player1Units.add(new TUnit());
 		
+		theBoard.player2Units.add(new TUnit());
 		theBoard.player2Units.add(new TUnit());
 		theBoard.player2Units.add(new TUnit());
 		theBoard.player2Units.add(new TUnit());
@@ -103,29 +129,40 @@ public class Tactics extends AlternatingGame
 		TUnit p1u1 = theBoard.player1Units.get(0);
 		TUnit p1u2 = theBoard.player1Units.get(1);
 		TUnit p1u3 = theBoard.player1Units.get(2);
+		TUnit p1u4 = theBoard.player1Units.get(3);
 		
 		TUnit p2u1 = theBoard.player2Units.get(0);
 		TUnit p2u2 = theBoard.player2Units.get(1);
 		TUnit p2u3 = theBoard.player2Units.get(2);
+		TUnit p2u4 = theBoard.player2Units.get(3);
+		
 		
 		p1u1.name = "Bob";
 		p1u2.name = "Aerith";
 		p1u3.name = "Joe";
+		p1u4.name = "Steve";
 		
 		p2u1.name = "Tomoko";
 		p2u2.name = "Karin";
 		p2u3.name = "Fear";
+		p2u4.name = "Destiny";
+		
 		
 		
 		
 		// Move Units
-		p1u1.moveTo(4, 9);
-		p1u2.moveTo(5, 9);
-		p1u3.moveTo(6, 9);
+		p1u1.moveTo(3, 9);
+		p1u2.moveTo(4, 9);
+		p1u3.moveTo(5, 9);
+		p1u4.moveTo(6, 9);
 		
-		p2u1.moveTo(4, 0);
-		p2u2.moveTo(5, 0);
-		p2u3.moveTo(6, 0);
+		p2u1.moveTo(3, 0);
+		p2u2.moveTo(4, 0);
+		p2u3.moveTo(5, 0);
+		p2u4.moveTo(6, 0);
+		
+		isHuman[1] = true;
+		isHuman[2] = false;
 		
 	}
 	
@@ -204,6 +241,53 @@ public class Tactics extends AlternatingGame
 		}
 	}
 
+	void aiDump(String filepath, String[] data)
+	{
+		// dump without header
+		if(data.length == 0)
+			return;
+		aiDump(filepath, data, new String[0]);
+	}
+	
+	void aiDump(String filepath, String[] data, String[] header)
+	{	
+		if(data.length == 0)
+			return;
+		try{
+			FileWriter f = new FileWriter(filepath, true);
+			BufferedWriter writer = new BufferedWriter(f);
+			PrintWriter out = new PrintWriter(writer);
+			
+			LocalDateTime ldt = LocalDateTime.now();
+			out.println("Entry: (" + ldt + ")");
+			
+			if(header.length > 0)
+				for(String line: header)
+					out.println(line);
+			
+			out.println("Board at time of entry:\n");
+			
+			char[][] renderedBoard = theBoard.render();
+			
+			for(char[] row : renderedBoard)
+			{
+				String line = "";
+				for(char c : row)
+					line = line + c;
+				out.println(line);
+			}	
+			
+			out.println("-----");
+			
+			for(String line : data)
+				out.println(line);
+			
+			writer.close();
+		} catch(IOException x){
+			System.err.format("IOException: %s\n", x);
+		}
+	}
+	
 	@Override
 	void getHumanMove() {
 		
@@ -229,6 +313,9 @@ public class Tactics extends AlternatingGame
 			
 			unit = allyList.get(i);
 			
+			if(unit.isDead())
+				continue;
+			
 			// If the unit was in a special state, reset it so it can take its turn
 			unit.resetState();
 			
@@ -242,15 +329,22 @@ public class Tactics extends AlternatingGame
 			respondToMovementInput(unit, enemyList, validMoves);
 			
 			if(unit.isDead()) // killed by reaction fire
+			{
+				drawBoard();
 				continue;
+			}
 			
 			// Wait for player input, perform action accordingly			
 			respondToActionInput(unit, enemyList);
 			
+			// If the game is over, end the turn
+			if(isGameOver())
+				break;
+			
 		} // end of for loop over units
 		
 		theBoard.checkUnits();
-		theBoard.nextTurn();
+		whoseTurn = theBoard.nextTurn();
 		
 		//scanner.close();
 	}
@@ -282,20 +376,7 @@ public class Tactics extends AlternatingGame
 					theBoard.whoseTurn, unit.name, unit.getPos().getX(), unit.getPos().getY());
 			
 			// Here we use Java's built-in ArrayList so that we can use the .contains() method
-			ArrayList<TUnit> validTargets = new ArrayList<TUnit>();
-			
-			for(int z = 0; z < enemyList.getSize(); z++)
-			{
-				TUnit enemy = enemyList.get(z);
-				if(enemy.isInFiringRange(unit.pos) && theBoard.lineOfSight(unit.getPos(), enemy.getPos()))
-				{
-					System.out.printf(MSG_PRESHOT, 
-							z, enemy.name, enemy.getPos().getX(), enemy.getPos().getY(), unit.chanceToHit(enemy),
-							unit.chanceToCrit(enemy),
-							enemy.isFlankedBy(unit));
-					validTargets.add(enemy);
-				}
-			}
+			ArrayList<TUnit> validTargets = findValidTargets(unit, enemyList);
 			
 			System.out.print("Select target or action: ");
 			
@@ -361,7 +442,29 @@ public class Tactics extends AlternatingGame
 		if(target != null)
 			unit.shootAt(target);
 		
-		theBoard.checkUnits();
+		//theBoard.checkUnits();
+	}
+	
+	ArrayList<TUnit> findValidTargets(TUnit unit, DSArrayList<TUnit> enemyList)
+	{
+		ArrayList<TUnit> validTargets = new ArrayList<TUnit>(); 
+		
+		for(int z = 0; z < enemyList.getSize(); z++)
+		{
+			TUnit enemy = enemyList.get(z);
+			if(enemy.isDead())
+				continue;
+			if(enemy.isInFiringRange(unit.pos) && theBoard.lineOfSight(unit.getPos(), enemy.getPos()))
+			{
+				System.out.printf(MSG_PRESHOT, 
+						z, enemy.name, enemy.getPos().getX(), enemy.getPos().getY(), unit.chanceToHit(enemy),
+						unit.chanceToCrit(enemy),
+						enemy.isFlankedBy(unit));
+				validTargets.add(enemy);
+			}
+		}
+		
+		return validTargets;
 	}
 	
 	void respondToMovementInput(TUnit unit, DSArrayList<TUnit> enemyList, ArrayList<Coord> validMoves)
@@ -423,6 +526,7 @@ public class Tactics extends AlternatingGame
 			
 		} // end of while loop
 		
+	
 		checkForOverwatch(unit, targetPos, enemyList);
 		
 		unit.moveTo(targetPos);
@@ -456,17 +560,21 @@ public class Tactics extends AlternatingGame
 			for(int z = 0; z < enemyList.getSize(); z++)
 			{
 				TUnit thisGuy = enemyList.get(z);
-				if(thisGuy.overwatchActive && 
+				if(thisGuy.isDead())
+					continue;
+				
+				if(!unit.isDead() &&
+						thisGuy.overwatchActive && 
 						((thisGuy.isInFiringRange(unit.getPos()) && theBoard.lineOfSight(thisGuy.getPos(), unit.getPos())) || 
-								(thisGuy.isInFiringRange(targetPos)) && theBoard.lineOfSight(thisGuy.getPos(), targetPos))
+						(thisGuy.isInFiringRange(targetPos) && theBoard.lineOfSight(thisGuy.getPos(), targetPos)))
 						)
-				{
+					{
 					System.out.printf(MSG_OVERWATCH, thisGuy.name, unit.name);
 					thisGuy.shootAt(unit);
 					
 					thisGuy.resetState(); // remove overwatch
 					
-					sleep(1000);
+					sleep(2000);
 					
 				}
 			}
@@ -475,23 +583,368 @@ public class Tactics extends AlternatingGame
 	
 	@Override
 	void getComputerMove() {
-		getDumbComputerMove();
+		getSmartComputerMove();
 	}
 	
 	void getDumbComputerMove()
 	{
+		System.out.println("Computer making a move...");
 		
+		int us   = theBoard.whoseTurn - 1;
+		int them = theBoard.whoIsNext() - 1;
+		
+		// Build a an array list for all ally units (units on our team) and all enemy units (units on the other team)
+		
+		DSArrayList<TUnit> allyList  = theBoard.playerUnits.get(us);
+		DSArrayList<TUnit> enemyList = theBoard.playerUnits.get(them);
+		
+		// Used in a loop to do things for each individual unit
+		
+		TUnit unit;
+		
+		// Update cover
+		checkCoverForAll(allyList);
+		checkCoverForAll(enemyList);
+		
+		// For each unit under our control...
+		for(int i = 0; i < allyList.getSize(); i++)
+		{
+			
+			unit = allyList.get(i);
+			
+			if(unit.isDead())
+				continue;
+			
+			// If the unit was in a special state, reset it so it can take its turn
+			unit.resetState();
+			
+			// Find all valid moves that the unit can make
+			ArrayList<Coord> validMoves = getValidMoves(unit);
+			
+			// Make a random move
+			
+			Coord targetPos;
+			
+			if(validMoves.size() > 1)
+				targetPos = validMoves.get((int)Math.floor(randRange(0, validMoves.size())));
+			else if(validMoves.size() == 1)
+				targetPos = validMoves.get(0);
+			else 
+				targetPos = unit.getPos();
+			
+			// For dumb computer move, if we happen to pick an invalid move, just don't move
+			if(!theBoard.isBlank(targetPos) && unit.distanceTo(targetPos) > 0)
+				targetPos = unit.getPos();
+			
+			System.out.println(unit.name + " moving...");
+			
+			sleep(2000);
+			
+			checkForOverwatch(unit, targetPos, enemyList);
+			
+			unit.moveTo(targetPos);
+			unit.checkCover(theBoard);
+			
+			drawBoard();
+			
+			if(unit.isDead()) // killed by reaction fire
+			{
+				drawBoard();
+				continue;
+			}
+			
+			ArrayList<TUnit> validTargets = findValidTargets(unit, enemyList);
+			
+			TUnit target;
+			
+			System.out.println(unit.name + " choosing action...");;
+			
+			sleep(2000);
+			
+			if(validTargets.size() > 0)
+				target = validTargets.get((int)Math.floor(randRange(0, validTargets.size() - 1)));
+			else 
+				target = null;
+			
+			if(target != null)
+				unit.shootAt(target);
+			else
+			{
+				System.out.printf(MSG_OVERWATCHING, unit.name);
+				unit.overwatch();
+			}
+			
+			//theBoard.checkUnits();
+			
+			// If the game is over, end the turn
+			if(isGameOver())
+				break;
+			
+			
+			
+		} // end of for loop over units
+		
+		theBoard.checkUnits();
+		whoseTurn = theBoard.nextTurn();
+
+	}
+	
+	// AI
+	void getSmartComputerMove()
+	{
+		System.out.println("Computer (player " + theBoard.whoseTurn + ") making a move...");
+		
+		int us   = theBoard.whoseTurn - 1;
+		int them = theBoard.whoIsNext() - 1;
+		
+		// Build a an array list for all ally units (units on our team) and all enemy units (units on the other team)
+		
+		DSArrayList<TUnit> allyList  = theBoard.playerUnits.get(us);
+		DSArrayList<TUnit> enemyList = theBoard.playerUnits.get(them);
+		
+		// Used in a loop to do things for each individual unit
+		
+		TUnit unit;
+		
+		// Update cover
+		checkCoverForAll(allyList);
+		checkCoverForAll(enemyList);
+		
+		// For each unit under our control...
+		for(int i = 0; i < allyList.getSize(); i++)
+		{
+			
+			unit = allyList.get(i);
+			
+			if(unit.isDead())
+				continue;
+			
+			// If the unit was in a special state, reset it so it can take its turn
+			unit.resetState();
+			
+			Coord targetPos;
+			
+			System.out.println(unit.name + " moving...");
+			
+			// Score the moves
+			targetPos = findBestMove(unit, enemyList); 
+			
+			sleep(2000);
+			
+			checkForOverwatch(unit, targetPos, enemyList);
+			
+			unit.moveTo(targetPos);
+			unit.checkCover(theBoard);
+			
+			
+			drawBoard();
+			
+			if(unit.isDead()) // killed by reaction fire
+			{
+				drawBoard();
+				continue;
+			}
+			
+			System.out.println(unit.name + " choosing action...");;
+			
+			sleep(2000);
+			
+			TUnit target = findBestTarget(unit, enemyList);
+			
+			if(target != null && unit.chanceToHit(target) > AI_AIM_MINIMUM)
+				unit.shootAt(target);
+			else
+			{
+				System.out.printf(MSG_OVERWATCHING, unit.name);
+				unit.overwatch();
+			}
+			
+			//theBoard.checkUnits();
+			
+			// If the game is over, end the turn
+			if(isGameOver())
+				break;
+			
+			
+		} // end of for loop over units
+		
+		theBoard.checkUnits();
+		whoseTurn = theBoard.nextTurn();
+
+	}
+	
+	TUnit findBestTarget(TUnit unit, DSArrayList<TUnit> enemyList)
+	{
+		
+		// This is for dumping to a log
+		ArrayList<String> dump = new ArrayList<>();
+		
+		
+		ArrayList<TUnit> validTargets = findValidTargets(unit, enemyList);
+		
+		TUnit target;
+		
+		ArrayList<Integer> targetScores = new ArrayList<Integer>();
+		
+		if(validTargets.size() > 0)
+		{
+			for(TUnit enemy : validTargets)
+			{
+				int score = 0;
+				
+				int chanceToHit = unit.chanceToHit(enemy);
+				
+				score += chanceToHit;
+				
+				score += (int)unit.chanceToCrit(enemy) * Tactics.AI_CRIT_VALUE;
+				
+				targetScores.add(score);
+				
+				dump.add("Enemy " + enemy.name + ": ai values this target at " + score);
+			}
+			
+			int theTarget = 0;
+			
+			for(int q = 0; q < targetScores.size(); q++)
+			{
+				if(targetScores.get(q) > targetScores.get(theTarget))
+					theTarget = q;
+			}
+			
+			target = validTargets.get(theTarget);
+			
+		}				
+		else 
+			target = null;
+		
+		// Dump AI log to file
+		String[] dumpArray = new String[dump.size()];
+		
+		dumpArray = dump.toArray(dumpArray);
+		
+		String[] dumpHeader = {unit.name, unit.getPos().toString()};
+		
+		aiDump(Tactics.AI_LOG_FILEPATH, dumpArray, dumpHeader);
+		
+		return target;
 	}
 
+	Coord findBestMove(TUnit unit, DSArrayList<TUnit> enemyList)
+	{
+		
+		ArrayList<String> dump = new ArrayList<>();
+		
+		// Find all valid moves that the unit can make
+		ArrayList<Coord> mostlyValidMoves = getValidMoves(unit);
+		
+		ArrayList<Coord> validMoves = new ArrayList<Coord>();
+		
+		for(Coord move : mostlyValidMoves)
+		{
+			if(theBoard.isBlank(move))
+				validMoves.add(move);
+		}
+		
+		validMoves.add(unit.getPos());
+		
+		Coord targetPos = null;
+		
+		ArrayList<Integer> moveScores = new ArrayList<Integer>();
+		
+		if(validMoves.size() > 0)
+		{
+			for(Coord move : validMoves)
+			{
+				int score = 0;
+				
+				Coord oldPos = new Coord(unit.getPos().getX(), unit.getPos().getY());
+				
+				int wouldTriggerOverwatchValue = theBoard.howMuchOverwatch(unit, move, enemyList) * AI_WOULD_TRIGGER_OVERWATCH_VALUE;
+				
+				score += wouldTriggerOverwatchValue;
+				
+				//System.out.println("(" + move.getX() + ", " + move.getY() + ") WTO value: " + wouldTriggerOverwatchValue);
+				
+				unit.moveTo(move);
+				unit.checkCover(theBoard);
+				
+				score += unit.inCover * Tactics.AI_COVER_VALUE;
+				
+				int weFlank = 0;
+				int flankedBy = 0;
+				
+				int flankBonus = 0;
+				int flankPenalty = 0;
+				
+				for(int z = 0; z < enemyList.getSize(); z++)
+				{
+					TUnit enemy = enemyList.get(z);
+					if(enemy.isDead())
+						continue;
+					if(enemy.isFlankedBy(unit))
+					{
+						weFlank++;
+						flankBonus+= (int)Math.max(Tactics.AI_MAX_FLANK_DIST - unit.distanceTo(enemy), 0);
+					}
+					
+					if(unit.isFlankedBy(enemy))
+					{
+						flankedBy++;
+						flankPenalty+= (int)Math.max(Tactics.AI_MAX_FLANK_DIST - enemy.distanceTo(unit), 0);
+					}
+				}
+				
+				score += flankBonus   * Tactics.AI_FLANK_VALUE;
+				score += flankPenalty * Tactics.AI_FLANKED_VALUE;					
+				
+				unit.moveTo(oldPos);
+				
+				moveScores.add(score);
+				
+				
+				dump.add("Space ("+move.getX()+", "+move.getY()+"): ai values this space at "+score);
+			}
+			
+			int theMove = 0;
+			
+			for(int q = 0; q < moveScores.size(); q++)
+			{
+				if(moveScores.get(q) > moveScores.get(theMove))
+					theMove = q;
+			}
+			
+			targetPos = validMoves.get(theMove);
+			
+		}
+		else 
+			targetPos = unit.getPos();
+		
+		// Dump AI log to file
+		String[] dumpArray = new String[dump.size()];
+		
+		dumpArray = dump.toArray(dumpArray);
+		
+		String[] dumpHeader = {unit.name, unit.getPos().toString()};
+		
+		aiDump(Tactics.AI_LOG_FILEPATH, dumpArray, dumpHeader);
+		
+		return targetPos;
+	}
+	
 	@Override
 	boolean isGameOver() {		
 		boolean rv = false;
 		
-		theBoard.checkUnits();
+		int remainingP1Units = 0;
+		int remainingP2Units = 0;
 		
-		if(theBoard.player1Units.getSize() == 0)
-			rv = true;
-		if(theBoard.player2Units.getSize() == 0)
+		for(int q = 0; q < theBoard.player1Units.getSize(); q++)
+			remainingP1Units += (theBoard.player1Units.get(q).isDead())? 0 : 1;
+		
+		for(int q = 0; q < theBoard.player2Units.getSize(); q++)
+			remainingP2Units += (theBoard.player2Units.get(q).isDead())? 0 : 1;		
+		
+		if(remainingP1Units == 0 || remainingP2Units == 0)
 			rv = true;
 		
 		return rv;
@@ -513,6 +966,8 @@ public class Tactics extends AlternatingGame
 	int whoWon(Object board) {
 		
 		TBoard thisBoard = (TBoard) board;
+		
+		thisBoard.checkUnits();
 		
 		// This 0 should never get returned, but if it does that means that all units on both teams died,
 		// which means it's a draw.
