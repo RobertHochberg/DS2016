@@ -43,7 +43,7 @@ abstract class AlternatingGame extends TurnTakingGame {
 		Object board = getBoard();
 		Object[] children = getChildren(board);
 		Object newBoard = children[0];
-		
+
 		// Assume for now 2 players
 		int winner = 3 - whoseTurn;
 		for(int i = 0; i < children.length; i++){
@@ -68,17 +68,17 @@ abstract class AlternatingGame extends TurnTakingGame {
 					newBoard = children[i];
 				}
 		} // end of looping over children
-		
+
 		if(winner != 0)
 			System.out.println("Player " + winner + " has the win!");
-		
+
 		// board = newBoard; // This won't work right.
 		// We make our move by copying the newBoard into board
 		setBoard(newBoard);
 		whoseTurn = 3 - whoseTurn;
 	}
-	
-	
+
+
 	abstract void setBoard(Object nb);
 	abstract Object getBoard();
 

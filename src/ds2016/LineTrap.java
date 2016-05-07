@@ -1,11 +1,13 @@
 /**
- * draw lines until you can't.
- * rowLocation++ moves up/down; colLocation moves left/right
- * consider having non-square grid; would require another field
+ * rowLocation moves up/down; colLocation moves left/right
  * 
- * the computer does not play to win
- * considering that it doesn't play to win even if it has first turn,
- * I think whoseTurn or equivalent must be messed up somewhere
+ * works if I shove 1 and 2 right into 1,1 but not if I set them to a variable and cast
+ * if I do the second, computer does not play to win
+ * 
+ * todo
+ * 	add possibility of even grid and non-square grid; non-square would require another field
+ *
+ * http://unicode-table.com/en/sets/arrows-symbols/
  */
 
 package src.ds2016;
@@ -18,12 +20,16 @@ class LineTrap extends AlternatingGame{
 	char[][] board; //row 1st, col 2nd
 	int rowLocation;
 	int colLocation;
-	char VERTICALLINE = '\u2502';
-	char HORIZONTALLINE = '\u2500';
-	char DOT = '*';
-	char USEDDOT = 'O';
+	char UPLINE = '\u2191';
+	char DOWNLINE = '\u2193';
+	char LEFTLINE = '\u2190';
+	char RIGHTLINE = '\u2192';
+	char EMPTYSPACE = ' ';
+	char DOT = '\u25CB';
+	char USEDDOT = '\u25CF';
 	char MARKER = 'X';
 	String humanMove = "";
+	boolean error = false;
 
 	Scanner scanner;
 
@@ -51,7 +57,7 @@ class LineTrap extends AlternatingGame{
 			for(int col = 0; col < boardSize; col++){
 				if (row%2 == 0 && col%2 == 0) {
 					board[row][col] = DOT;
-				}
+				} else board[row][col] = EMPTYSPACE;
 			}
 		}
 		board[1][1] = 1;
@@ -105,83 +111,86 @@ class LineTrap extends AlternatingGame{
 	}
 
 	@Override
+	int getNumGridPoints(){
+		return numGridPoints;
+	}
+
+	@Override
 	void getHumanMove(){
 		do {
 			System.out.print("Please make a move: ");
 			humanMove = scanner.next();
 		} while (humanMove.indexOf("w") == -1 && humanMove.indexOf("W") == -1 && humanMove.indexOf("s") == -1 && humanMove.indexOf("S") == -1 && humanMove.indexOf("a") == -1 && humanMove.indexOf("A") == -1 && humanMove.indexOf("d") == -1 && humanMove.indexOf("D") == -1 || humanMove.length() != 1);
 
-		if (humanMove.indexOf("w") != -1) {
+		if (humanMove.indexOf("w") != -1 || humanMove.indexOf("W") != -1) {
 			getUpMove();
-		} else if (humanMove.indexOf("W") != -1) {
-			getUpMove();
-		} else if (humanMove.indexOf("s") != -1) {
+		} else if (humanMove.indexOf("s") != -1 || humanMove.indexOf("S") != -1) {
 			getDownMove();
-		} else if (humanMove.indexOf("S") != -1) {
-			getDownMove();
-		} else if (humanMove.indexOf("a") != -1) {
-			getRightMove();
-		} else if (humanMove.indexOf("A") != -1) {
-			getRightMove();
-		} else if (humanMove.indexOf("d") != -1) {
+		} else if (humanMove.indexOf("a") != -1 || humanMove.indexOf("A") != -1) {
 			getLeftMove();
-		} else if (humanMove.indexOf("D") != -1) {
-			getLeftMove();
+		} else if (humanMove.indexOf("d") != -1 || humanMove.indexOf("D") != -1) {
+			getRightMove();
 		}
 
-		whoseTurn = 3 - whoseTurn;
-		if (whoseTurn == 1) {
-			board[1][1] = 1;
-		} else board[1][1] = 2;
+		if (error == false) {
+			whoseTurn = 3 - whoseTurn;
+			if (whoseTurn == 1) {
+				board[1][1] = 1;
+			} else board[1][1] = 2;
+		} else error = false;
 	}
 
 	void getUpMove(){
-		while (rowLocation == 0 || board[rowLocation - 1][colLocation] == VERTICALLINE) {
+		while (rowLocation == 0 || board[rowLocation - 1][colLocation] == DOWNLINE || board[rowLocation - 1][colLocation] == UPLINE) {
 			System.out.println("I'm sorry, Dave. I'm afraid I can't do that.");
 			humanMove = "";
+			error = true;
 			getHumanMove();
 			return;
 		}
-		board[rowLocation - 1][colLocation] = VERTICALLINE;
+		board[rowLocation - 1][colLocation] = UPLINE;
 		board[rowLocation][colLocation] = USEDDOT;
 		rowLocation = rowLocation - 2;
 		board[rowLocation][colLocation] = MARKER;
 	}
 
 	void getDownMove(){
-		while (rowLocation == 2*numGridPoints-2 || board[rowLocation + 1][colLocation] == VERTICALLINE) {
+		while (rowLocation == 2*numGridPoints-2 || board[rowLocation + 1][colLocation] == UPLINE || board[rowLocation + 1][colLocation] == DOWNLINE) {
 			System.out.println("I'm sorry, Dave. I'm afraid I can't do that.");
 			humanMove = "";
 			getHumanMove();
+			error = true;
 			return;
 		}
-		board[rowLocation + 1][colLocation] = VERTICALLINE;
+		board[rowLocation + 1][colLocation] = DOWNLINE;
 		board[rowLocation][colLocation] = USEDDOT;
 		rowLocation = rowLocation + 2;
 		board[rowLocation][colLocation] = MARKER;
 	}
 
-	void getRightMove(){
-		while (colLocation == 0 || board[rowLocation][colLocation - 1] == HORIZONTALLINE) {
+	void getLeftMove(){
+		while (colLocation == 0 || board[rowLocation][colLocation - 1] == RIGHTLINE || board[rowLocation][colLocation - 1] == LEFTLINE) {
 			System.out.println("I'm sorry, Dave. I'm afraid I can't do that.");
 			humanMove = "";
 			getHumanMove();
+			error = true;
 			return;
 		}
-		board[rowLocation][colLocation - 1] = HORIZONTALLINE;
+		board[rowLocation][colLocation - 1] = LEFTLINE;
 		board[rowLocation][colLocation] = USEDDOT;
 		colLocation = colLocation - 2;
 		board[rowLocation][colLocation] = MARKER;
 	}
 
-	void getLeftMove(){
-		while (colLocation == 2*numGridPoints-2 || board[rowLocation][colLocation + 1] == HORIZONTALLINE) {
+	void getRightMove(){
+		while (colLocation == 2*numGridPoints-2 || board[rowLocation][colLocation + 1] == LEFTLINE || board[rowLocation][colLocation + 1] == RIGHTLINE) {
 			System.out.println("I'm sorry, Dave. I'm afraid I can't do that.");
 			humanMove = "";
 			getHumanMove();
+			error = true;
 			return;
 		}
-		board[rowLocation][colLocation + 1] = HORIZONTALLINE;
+		board[rowLocation][colLocation + 1] = RIGHTLINE;
 		board[rowLocation][colLocation] = USEDDOT;
 		colLocation = colLocation + 2;
 		board[rowLocation][colLocation] = MARKER;
@@ -196,57 +205,88 @@ class LineTrap extends AlternatingGame{
 	}
 
 	@Override
-	//this method is somehow returning 50 when called by getSmartComputerMove()
 	int whoseTurn(Object localBoard){
 		return (int)((char[][])localBoard)[1][1];
 	}
 
 	@Override
+	//need to check for both types of lines
 	boolean isGameOver(){
 		boolean isGameOver = false;
 		if (rowLocation == 0 && colLocation == 0) {
 			//upper left corner
-			if (board[rowLocation + 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation + 1] == HORIZONTALLINE) {
-				isGameOver = true;
+			if (board[rowLocation + 1][colLocation] == UPLINE || board[rowLocation + 1][colLocation] == DOWNLINE) {
+				if (board[rowLocation][colLocation + 1] == LEFTLINE || board[rowLocation][colLocation + 1] == RIGHTLINE) {
+					isGameOver = true;
+				}
 			}
-		} else if (rowLocation == 0 && colLocation == 2*numGridPoints-2) {
+		} else if (rowLocation == 0 && colLocation == boardSize - 1) {
 			//upper right corner
-			if (board[rowLocation + 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation - 1] == HORIZONTALLINE) {
-				isGameOver = true;
+			if (board[rowLocation + 1][colLocation] == UPLINE || board[rowLocation + 1][colLocation] == DOWNLINE) {
+				if (board[rowLocation][colLocation - 1] == LEFTLINE || board[rowLocation][colLocation - 1] == RIGHTLINE) {
+					isGameOver = true;
+				}
 			}
-		} else if (rowLocation == 2*numGridPoints-2 && colLocation == 0) {
+		} else if (rowLocation == boardSize - 1 && colLocation == 0) {
 			//lower left corner
-			if (board[rowLocation - 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation + 1] == HORIZONTALLINE) {
-				isGameOver = true;
+			if (board[rowLocation - 1][colLocation] == UPLINE || board[rowLocation - 1][colLocation] == DOWNLINE) {
+				if (board[rowLocation][colLocation + 1] == LEFTLINE || board[rowLocation][colLocation + 1] == RIGHTLINE) {
+					isGameOver = true;
+				}
 			}
-		} else if (rowLocation == 2*numGridPoints-2 && colLocation == 2*numGridPoints-2) {
+		} else if (rowLocation == boardSize - 1 && colLocation == boardSize - 1) {
 			//lower right corner
-			if (board[rowLocation - 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation - 1] == HORIZONTALLINE) {
-				isGameOver = true;
+			if (board[rowLocation - 1][colLocation] == UPLINE || board[rowLocation - 1][colLocation] == DOWNLINE) {
+				if (board[rowLocation][colLocation - 1] == LEFTLINE || board[rowLocation][colLocation - 1] == RIGHTLINE) {
+					isGameOver = true;
+				}
 			}
 		} else if (rowLocation == 0) {
-			//upper edge
-			if (board[rowLocation + 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation - 1] == HORIZONTALLINE && board[rowLocation][colLocation + 1] == HORIZONTALLINE) {
-				isGameOver = true;
+			//top edge
+			if (board[rowLocation + 1][colLocation] == UPLINE || board[rowLocation + 1][colLocation] == DOWNLINE) {
+				if (board[rowLocation][colLocation - 1] == LEFTLINE || board[rowLocation][colLocation - 1] == RIGHTLINE) {
+					if (board[rowLocation][colLocation + 1] == LEFTLINE || board[rowLocation][colLocation + 1] == RIGHTLINE) {
+						isGameOver = true;
+					}
+				}
 			}
-		} else if (rowLocation == 2*numGridPoints-2) {
-			//lower edge
-			if (board[rowLocation - 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation - 1] == HORIZONTALLINE && board[rowLocation][colLocation + 1] == HORIZONTALLINE) {
-				isGameOver = true;
+		} else if (rowLocation == boardSize - 1) {
+			//bottom edge
+			if (board[rowLocation - 1][colLocation] == UPLINE || board[rowLocation - 1][colLocation] == DOWNLINE) {
+				if (board[rowLocation][colLocation - 1] == LEFTLINE || board[rowLocation][colLocation - 1] == RIGHTLINE) {
+					if (board[rowLocation][colLocation + 1] == LEFTLINE || board[rowLocation][colLocation + 1] == RIGHTLINE) {
+						isGameOver = true;
+					}
+				}
 			}
 		} else if (colLocation == 0) {
 			//left edge
-			if (board[rowLocation - 1][colLocation] == VERTICALLINE && board[rowLocation + 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation + 1] == HORIZONTALLINE) {
-				isGameOver = true;
+			if (board[rowLocation - 1][colLocation] == UPLINE || board[rowLocation - 1][colLocation] == DOWNLINE) {
+				if (board[rowLocation + 1][colLocation] == UPLINE || board[rowLocation + 1][colLocation] == DOWNLINE) {
+					if (board[rowLocation][colLocation + 1] == LEFTLINE || board[rowLocation][colLocation + 1] == RIGHTLINE) {
+						isGameOver = true;
+					}
+				}
 			}
-		} else if (colLocation == 2*numGridPoints-2) {
+		} else if (colLocation == boardSize - 1) {
 			//right edge
-			if (board[rowLocation - 1][colLocation] == VERTICALLINE && board[rowLocation + 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation - 1] == VERTICALLINE) {
-				isGameOver = true;
+			if (board[rowLocation - 1][colLocation] == UPLINE || board[rowLocation - 1][colLocation] == DOWNLINE) {
+				if (board[rowLocation + 1][colLocation] == UPLINE || board[rowLocation + 1][colLocation] == DOWNLINE) {
+					if (board[rowLocation][colLocation - 1] == LEFTLINE || board[rowLocation][colLocation - 1] == RIGHTLINE) {
+						isGameOver = true;
+					}
+				}
 			}
-		} else if (board[rowLocation - 1][colLocation] == VERTICALLINE && board[rowLocation + 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation - 1] == HORIZONTALLINE && board[rowLocation][colLocation + 1] == HORIZONTALLINE) {
+		} else if (board[rowLocation - 1][colLocation] == UPLINE || board[rowLocation - 1][colLocation] == DOWNLINE) {
 			//middle of the board
-			isGameOver = true;
+			if (board[rowLocation + 1][colLocation] == UPLINE || board[rowLocation + 1][colLocation] == DOWNLINE) {
+				if (board[rowLocation][colLocation - 1] == LEFTLINE || board[rowLocation][colLocation - 1] == RIGHTLINE) {
+					if (board[rowLocation][colLocation + 1] == LEFTLINE || board[rowLocation][colLocation + 1] == RIGHTLINE) {
+						isGameOver = true;
+
+					}
+				}
+			}
 		} else isGameOver = false;
 		return isGameOver;
 	}
@@ -284,7 +324,7 @@ class LineTrap extends AlternatingGame{
 			}
 
 		//up move
-		if (localRowLocation != 0 && parent[localRowLocation - 1][localColLocation] != VERTICALLINE) {
+		if (localRowLocation != 0 && parent[localRowLocation - 1][localColLocation] != UPLINE && parent[localRowLocation - 1][localColLocation] != DOWNLINE) {
 			char[][] child = new char[boardSize][boardSize];
 			int lRL = localRowLocation;
 			int lCL = localColLocation;
@@ -297,7 +337,7 @@ class LineTrap extends AlternatingGame{
 				child[1][1] = 1;
 			} else child[1][1] = 2;
 
-			child[lRL - 1][lCL] = VERTICALLINE;
+			child[lRL - 1][lCL] = UPLINE;
 			child[lRL][lCL] = USEDDOT;
 			lRL = lRL - 2;
 			child[lRL][lCL] = MARKER;
@@ -305,7 +345,7 @@ class LineTrap extends AlternatingGame{
 		}
 
 		//down move
-		if (localRowLocation != 2*numGridPoints-2 && parent[localRowLocation + 1][localColLocation] != VERTICALLINE) {
+		if (localRowLocation != boardSize - 1 && parent[localRowLocation + 1][localColLocation] != UPLINE && parent[localRowLocation + 1][localColLocation] != DOWNLINE) {
 			char[][] child = new char[boardSize][boardSize];
 			int lRL = localRowLocation;
 			int lCL = localColLocation;
@@ -318,15 +358,15 @@ class LineTrap extends AlternatingGame{
 				child[1][1] = 1;
 			} else child[1][1] = 2;
 
-			child[lRL + 1][lCL] = VERTICALLINE;
+			child[lRL + 1][lCL] = DOWNLINE;
 			child[lRL][lCL] = USEDDOT;
 			lRL = lRL + 2;
 			child[lRL][lCL] = MARKER;
 			childrenHolder.add(child);
 		}
 
-		//right move
-		if (localColLocation != 0 && parent[localRowLocation][localColLocation - 1] != HORIZONTALLINE) {
+		//left move
+		if (localColLocation != 0 && parent[localRowLocation][localColLocation - 1] != LEFTLINE && parent[localRowLocation][localColLocation - 1] != RIGHTLINE) {
 			char[][] child = new char[boardSize][boardSize];
 			int lRL = localRowLocation;
 			int lCL = localColLocation;
@@ -339,15 +379,15 @@ class LineTrap extends AlternatingGame{
 				child[1][1] = 1;
 			} else child[1][1] = 2;
 
-			child[lRL][lCL - 1] = HORIZONTALLINE;
+			child[lRL][lCL - 1] = LEFTLINE;
 			child[lRL][lCL] = USEDDOT;
 			lCL = lCL - 2;
 			child[lRL][lCL] = MARKER;
 			childrenHolder.add(child);
 		}
 
-		//down move
-		if (localColLocation != 2*numGridPoints-2 && parent[localRowLocation][localColLocation + 1] != HORIZONTALLINE) {
+		//right move
+		if (localColLocation != boardSize - 1 && parent[localRowLocation][localColLocation + 1] != LEFTLINE && parent[localRowLocation][localColLocation + 1] != RIGHTLINE) {
 			char[][] child = new char[boardSize][boardSize];
 			int lRL = localRowLocation;
 			int lCL = localColLocation;
@@ -360,7 +400,7 @@ class LineTrap extends AlternatingGame{
 				child[1][1] = 1;
 			} else child[1][1] = 2;
 
-			child[lRL][lCL + 1] = HORIZONTALLINE;
+			child[lRL][lCL + 1] = RIGHTLINE;
 			child[lRL][lCL] = USEDDOT;
 			lCL = lCL + 2;
 			child[lRL][lCL] = MARKER;
@@ -380,9 +420,9 @@ class LineTrap extends AlternatingGame{
 		//done so that it concats into String
 		for(int i = 0; i < boardSize; i++){
 			for(int j = 0; j < boardSize; j++){
-				if (b[i][j] == VERTICALLINE) {
+				if (b[i][j] == UPLINE || b[i][j] == DOWNLINE) {
 					stringBoard[i][j] = "v";
-				} else if (b[i][j] == HORIZONTALLINE) {
+				} else if (b[i][j] == LEFTLINE || b[i][j] == RIGHTLINE) {
 					stringBoard[i][j] = "h";
 				} else if (b[i][j] == MARKER) {
 					stringBoard[i][j] = "m";
@@ -405,49 +445,30 @@ class LineTrap extends AlternatingGame{
 
 	@Override
 	int evaluateHeuristic(DSNode board) {
+		char[][] localBoard = (char[][])getBoard();
+		int whoseTurn = whoseTurn(board.getBoard());
+		int boardScore = 0;
 		if (rowLocation == 0 && colLocation == 0) {
 			//upper left corner
-			if (board[rowLocation + 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation + 1] == HORIZONTALLINE) {
-				
+			if (localBoard[rowLocation + 1][colLocation] == DOWNLINE && localBoard[rowLocation][colLocation + 1] == RIGHTLINE) {
+
 			}
 		} else if (rowLocation == 0 && colLocation == 2*numGridPoints-2) {
 			//upper right corner
-			if (board[rowLocation + 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation - 1] == HORIZONTALLINE) {
-				
+			if (localBoard[rowLocation + 1][colLocation] == DOWNLINE && localBoard[rowLocation][colLocation - 1] == LEFTLINE) {
+
 			}
 		} else if (rowLocation == 2*numGridPoints-2 && colLocation == 0) {
 			//lower left corner
-			if (board[rowLocation - 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation + 1] == HORIZONTALLINE) {
-				
+			if (localBoard[rowLocation - 1][colLocation] == UPLINE && localBoard[rowLocation][colLocation + 1] == RIGHTLINE) {
+
 			}
 		} else if (rowLocation == 2*numGridPoints-2 && colLocation == 2*numGridPoints-2) {
 			//lower right corner
-			if (board[rowLocation - 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation - 1] == HORIZONTALLINE) {
-				isGameOver = true;
+			if (localBoard[rowLocation - 1][colLocation] == UPLINE && localBoard[rowLocation][colLocation - 1] == LEFTLINE) {
+
 			}
-		} else if (rowLocation == 0) {
-			//upper edge
-			if (board[rowLocation + 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation - 1] == HORIZONTALLINE && board[rowLocation][colLocation + 1] == HORIZONTALLINE) {
-				
-			}
-		} else if (rowLocation == 2*numGridPoints-2) {
-			//lower edge
-			if (board[rowLocation - 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation - 1] == HORIZONTALLINE && board[rowLocation][colLocation + 1] == HORIZONTALLINE) {
-				
-			}
-		} else if (colLocation == 0) {
-			//left edge
-			if (board[rowLocation - 1][colLocation] == VERTICALLINE && board[rowLocation + 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation + 1] == HORIZONTALLINE) {
-				
-			}
-		} else if (colLocation == 2*numGridPoints-2) {
-			//right edge
-			if (board[rowLocation - 1][colLocation] == VERTICALLINE && board[rowLocation + 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation - 1] == VERTICALLINE) {
-				isGameOver = true;
-			}
-		} else if (board[rowLocation - 1][colLocation] == VERTICALLINE && board[rowLocation + 1][colLocation] == VERTICALLINE && board[rowLocation][colLocation - 1] == HORIZONTALLINE && board[rowLocation][colLocation + 1] == HORIZONTALLINE) {
-			//middle of the board
-			
-		} else
+		}
+		return boardScore;
 	}
 }

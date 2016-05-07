@@ -72,13 +72,12 @@ abstract class TurnTakingGame{
 
 		// Assume for now 2 players
 		int whoseTurn = whoseTurn(root.getBoard());
-		int winner = 3 - whoseTurn;
+		int winner = 0;
+		//int winner = 3 - whoseTurn;
 		for(int i = 0; i < root.getNumChildren(); i++){
-			evaluateHeuristic((DSNode)(root.getChildren().get(i))); 
-			/**
-			 * code for evaluating complete tree
-			 * 
-			evaluateTree((DSNode)(root.getChildren().get(i)));  // Recursive call
+			if (getNumGridPoints() <= 5) {
+				evaluateTree((DSNode)(root.getChildren().get(i)));  // Recursive call
+			} else evaluateHeuristic((DSNode)(root.getChildren().get(i))); 
 			if(whoseTurn == 1){
 				if(winner == 2)
 					winner = ((DSNode) root.getChildren().get(i)).getWinner();
@@ -93,13 +92,13 @@ abstract class TurnTakingGame{
 					winner = 2;
 			}
 		} // end of looping over children
-			 */
-			root.setWinner(winner);
-			return winner;
-		}
+
+		root.setWinner(winner);
+		return winner;
 	}
 
 	// returns an array of boards
 	abstract Object[] getChildren(Object board);
 	abstract int evaluateHeuristic(DSNode board);
+	abstract int getNumGridPoints();
 }
