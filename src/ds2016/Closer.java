@@ -14,13 +14,14 @@ public class Closer
 	static ArrayList<Integer> usedNumbers = new ArrayList<Integer>();
 	static int round = 1;
    static int index = 0;
+   static boolean isCloser = false;
 	
 	public static void main(String args[])
 	{
-      boolean isCloser = false; 
 		boolean done = false;
 		Scanner keyboard = new Scanner(System.in);
-		System.out.println("What is the highest number that you want to play with?");
+		System.out.println
+      ("What is the highest number that you want to play with?");
 		upperBound = keyboard.nextInt();
 		num = (int)Math.ceil(Math.random() * upperBound);
       board = new char[upperBound];
@@ -32,107 +33,68 @@ public class Closer
          while(!done)
 			{
                System.out.println("\nThis is round " + round);
+        
          
-         if(round%2!=0)
+         if(round % 2 != 0)
          {
                System.out.println("\nNumbers already used: " + usedNumbers);
    				System.out.println("\nPlayer 1, take your guess: ");
    				p1guess = keyboard.nextInt();
-   					while(usedNumbers.contains(p1guess) || p1guess > upperBound || p1guess < 0)
+   					while(usedNumbers.contains(p1guess) || 
+                  p1guess > upperBound || p1guess < 0)
    					{
-   						System.out.println("\nThat move is not available, select another number: ");
+   						System.out.println
+                     ("\nThat move is not available select another number: ");
    						p1guess = keyboard.nextInt();
-                     if(!usedNumbers.contains(p1guess))
+                     if(!usedNumbers.contains(p1guess) || computerGuess == num)
                         break;
    					}
    					
-   				usedNumbers.add(p1guess);
+   				usedNumbers.add(index, p1guess);
                board[p1guess - 1] = playerOneCharacter;
                
-                  if(Math.abs(num - p1guess) < Math.abs(num - computerGuess) || 
-                  Math.abs(num - computerGuess) == Math.abs(num - p1guess))
-		                isCloser = false;
-		            if(Math.abs(num - computerGuess) < Math.abs(num - p1guess))
-                  {
-                      isCloser = true;
-                  }
-   				
-               if(round != 1 && isCloser && computerGuess > p1guess)
-                  computerGuess = computerGuess + (int)(Math.random() * ((upperBound - computerGuess)));
-   				else if(round != 1 && isCloser && computerGuess < p1guess)
-                  computerGuess = 1 + (int)(Math.random() * ((computerGuess - 1)));
-               else if (round != 1 && !isCloser && p1guess < computerGuess)
-                  computerGuess = 1 + (int)(Math.random() * ((p1guess - 1)));
-               else if (round != 1 && !isCloser && p1guess > computerGuess)
-                  computerGuess = (p1guess + 1) + (int)(Math.random() * ((upperBound - (p1guess + 1))));
-               else if(!isCloser && p1guess == 1)
-                  computerGuess = 2 + (int)(Math.random() * ((computerGuess - 2)));
-               else if(!isCloser && p1guess == 10)
-                  computerGuess = (computerGuess + 1) + (int)(Math.random() * ((9 - (computerGuess + 1))));    
-               else
-                  computerGuess = (int)Math.ceil(Math.random() * upperBound);
-   					
-                  while(usedNumbers.contains(computerGuess) || computerGuess > upperBound || computerGuess < 0)
+               while(usedNumbers.contains(computerGuess) || 
+                  computerGuess > upperBound || computerGuess <= 0)
    					{
    						computerGuess = (int)Math.ceil(Math.random() * upperBound);
-                     if(!usedNumbers.contains(computerGuess))
+                     if(!usedNumbers.contains(computerGuess) || p1guess == num)
                         break;
    					}
+                                     
    				System.out.println("\nComputer selects " + computerGuess);
-               usedNumbers.add(computerGuess);
+               usedNumbers.add(index, computerGuess);
                board[computerGuess - 1] = playerTwoCharacter;
             }
             
             else
             {
-               if(Math.abs(num - p1guess) < Math.abs(num - computerGuess) || 
-                  Math.abs(num - computerGuess) == Math.abs(num - p1guess))
-		                isCloser = false;
-		            if(Math.abs(num - computerGuess) < Math.abs(num - p1guess))
-                  {
-                      isCloser = true;
-                  }
-               
-               if(isCloser && computerGuess > p1guess)
-                  computerGuess = computerGuess + (int)(Math.random() * ((upperBound - computerGuess)));
-   				else if(isCloser && computerGuess < p1guess)
-                  computerGuess = 1 + (int)(Math.random() * ((computerGuess - 1)));
-               else if (!isCloser && p1guess < computerGuess)
-                  computerGuess = 1 + (int)(Math.random() * ((p1guess - 1)));
-               else if (!isCloser && p1guess > computerGuess)
-                  computerGuess = (p1guess + 1) + (int)(Math.random() * ((upperBound - (p1guess + 1))));
-               else if(!isCloser && p1guess == 1)
-                  computerGuess = 2 + (int)(Math.random() * ((computerGuess - 2)));
-               else if(!isCloser && p1guess == 10)
-                  computerGuess = (computerGuess + 1) + (int)(Math.random() * ((9 - (computerGuess + 1))));
-               else
-                  computerGuess = (int)Math.ceil(Math.random() * upperBound);
-   					
-                  while(usedNumbers.contains(computerGuess) || computerGuess > upperBound || computerGuess < 0)
+                  while(usedNumbers.contains(computerGuess) || 
+                  computerGuess > upperBound || computerGuess <= 0)
    					{
    						computerGuess = (int)Math.ceil(Math.random() * upperBound);
-                     if(!usedNumbers.contains(computerGuess))
+                     if(!usedNumbers.contains(computerGuess) || p1guess == num)
                         break;
-   					}
+   					}    
+
    				System.out.println("\nComputer selects " + computerGuess);
-               usedNumbers.add(computerGuess);
+               usedNumbers.add(index, computerGuess);
                board[computerGuess - 1] = playerTwoCharacter;
                System.out.println("\nNumbers already used: " + usedNumbers);
    				System.out.println("\nPlayer 1, take your guess: ");
    				p1guess = keyboard.nextInt();
-   					while(usedNumbers.contains(p1guess) || p1guess > upperBound || p1guess < 0)
+   					while(usedNumbers.contains(p1guess) || 
+                  p1guess > upperBound || p1guess < 0)
    					{
-   						System.out.println("\nThat move is not available, select another number: ");
+   						System.out.println
+                     ("\nThat move is not available, select another number: ");
    						p1guess = keyboard.nextInt();
-                     if(!usedNumbers.contains(p1guess))
+                     if(!usedNumbers.contains(p1guess) || computerGuess == num)
                         break;
    					}
    					
-   				usedNumbers.add(p1guess);
+   				usedNumbers.add(index, p1guess);
                board[p1guess - 1] = playerOneCharacter; 
    		}
-
-				
 				 if(p1guess == num){
 		                System.out.println("\nPlayer 1 wins");
 		                break;
@@ -143,8 +105,22 @@ public class Closer
 		            }
                   
                   
-                  System.out.println("\n1 " + Arrays.toString(board) + " " + upperBound);
-                  
+                  System.out.print("\n1 ");
+                  if(board.length > 100)
+                  {
+                     for(int i = 0; i < board.length; i++)
+                     {
+                        if(i % 25 == 0 || board[i] == playerOneCharacter || board[i] == playerTwoCharacter)
+                           System.out.print(board[i]);
+                     }
+                  }
+                  else
+                  {
+                     for(int i = 0; i < board.length; i++)
+                        System.out.print(board[i]);
+                  }
+                  System.out.print(" " + upperBound);
+                                   
                   System.out.println("\nNumbers already used: " + usedNumbers);
                   
                   board[usedNumbers.get(index) - 1] = '-';
@@ -154,13 +130,49 @@ public class Closer
 
 		            if(Math.abs(num - p1guess) < Math.abs(num - computerGuess))
 		                System.out.println("\nPlayer 1 is closer");
+                      isCloser = false;
 		            if(Math.abs(num - computerGuess) < Math.abs(num - p1guess))
                   {
 		                System.out.println("\nComputer is closer");
                       isCloser = true;
                   }
                   if(Math.abs(num - computerGuess) == Math.abs(num - p1guess))
-		                System.out.println("\nBoth players are equidistant from the answer");		            
+		                System.out.println
+                      ("\nBoth players are equidistant from the answer");
+                      isCloser = false;
+                  
+                  if(isCloser && computerGuess > p1guess)
+                  {
+                     for(int i = 1; i < (computerGuess - ((computerGuess - p1guess) / 2)); i++)
+                     {
+                        if(i != num && !usedNumbers.contains(i))
+                           usedNumbers.add(i);
+                     }
+                  }
+      				else if(isCloser && computerGuess < p1guess)
+                  {
+                     for(int i = (1 + (p1guess - ((p1guess - computerGuess) / 2))); i <= upperBound; i++)
+                     {
+                        if(i != num && !usedNumbers.contains(i))
+                           usedNumbers.add(i);
+                     }
+                  }
+                  else if (!isCloser && p1guess < computerGuess)
+                  {
+                     for(int i = (1 + (computerGuess - ((computerGuess - p1guess) / 2))); i <= upperBound; i++)
+                        {
+                           if(i != num && !usedNumbers.contains(i))
+                              usedNumbers.add(i);
+                     }
+                  }
+                  else if (!isCloser && p1guess > computerGuess)
+                  {
+                     for(int i = 1; i < (p1guess - ((p1guess - computerGuess) / 2)); i++)
+                     {
+                        if(i != num && !usedNumbers.contains(i))
+                           usedNumbers.add(i);
+                     }
+                  }	            
 		            
                   round++;
 			}
