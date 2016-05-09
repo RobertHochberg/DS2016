@@ -46,7 +46,7 @@ abstract class AlternatingGame extends TurnTakingGame {
 		// Assume for now 2 players
 		int winner = 3 - whoseTurn;
 		for(int i = 0; i < children.length; i++){
-			DSNode childTree = buildTree(children[i]);
+			DSNode childTree = buildTree(children[i], 8); // The depth controls how far ahead the computer thinks
 			int childVal = evaluateTree(childTree);  // Recursive call
 			if(whoseTurn == 1){
 				if(winner == 2 && childVal != 2){
