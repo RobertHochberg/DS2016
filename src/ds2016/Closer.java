@@ -14,11 +14,11 @@ public class Closer
 	static ArrayList<Integer> usedNumbers = new ArrayList<Integer>();
 	static int round = 1;
    static int index = 0;
-   static boolean isCloser = false;
 	
 	public static void main(String args[])
 	{
 		boolean done = false;
+      boolean isCloser = false;
 		Scanner keyboard = new Scanner(System.in);
 		System.out.println
       ("What is the highest number that you want to play with?");
@@ -129,17 +129,21 @@ public class Closer
                   index++;
 
 		            if(Math.abs(num - p1guess) < Math.abs(num - computerGuess))
+                  {
 		                System.out.println("\nPlayer 1 is closer");
                       isCloser = false;
+                  }
 		            if(Math.abs(num - computerGuess) < Math.abs(num - p1guess))
                   {
 		                System.out.println("\nComputer is closer");
                       isCloser = true;
                   }
                   if(Math.abs(num - computerGuess) == Math.abs(num - p1guess))
+                  {
 		                System.out.println
                       ("\nBoth players are equidistant from the answer");
                       isCloser = false;
+                  }
                   
                   if(isCloser && computerGuess > p1guess)
                   {
@@ -149,17 +153,17 @@ public class Closer
                            usedNumbers.add(i);
                      }
                   }
-      				else if(isCloser && computerGuess < p1guess)
+      				else if(isCloser && p1guess > computerGuess)
                   {
-                     for(int i = (1 + (p1guess - ((p1guess - computerGuess) / 2))); i <= upperBound; i++)
+                     for(int i = (p1guess - ((p1guess - computerGuess) / 2)); i <= upperBound; i++)
                      {
                         if(i != num && !usedNumbers.contains(i))
                            usedNumbers.add(i);
                      }
                   }
-                  else if (!isCloser && p1guess < computerGuess)
+                  else if (!isCloser && computerGuess > p1guess)
                   {
-                     for(int i = (1 + (computerGuess - ((computerGuess - p1guess) / 2))); i <= upperBound; i++)
+                     for(int i = (computerGuess - ((computerGuess - p1guess) / 2)); i <= upperBound; i++)
                         {
                            if(i != num && !usedNumbers.contains(i))
                               usedNumbers.add(i);
