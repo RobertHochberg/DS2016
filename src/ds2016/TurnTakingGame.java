@@ -7,6 +7,8 @@
 
 package ds2016;
 
+import java.util.HashMap;
+
 abstract class TurnTakingGame{
 	int numberOfPlayers;
 
@@ -15,12 +17,24 @@ abstract class TurnTakingGame{
 	abstract void doEndgameStuff();
 	abstract int  whoseTurn(Object localBoard);
 	abstract int  whoWon(Object board);
+	abstract String toString(Object board);
 
+	
+	HashMap<String, DSNode> treeMap = new HashMap<String, DSNode>();
+	
 	/**
 	 * Builds a game tree and returns the DSNode that 
-	 * is the root of that tree
+	 * is the root of that tree.
+	 * The depth controls how far ahead the computer thinks.
 	 */
-	DSNode buildTree(Object board){
+	DSNode buildTree(Object board, int depth){
+		String boardString = toString(board);
+		
+		// Check to see if we've already processed this string.
+		if(treeMap.containsKey(boardString)){
+			return treeMap.get(boardString);
+		}
+
 		// root is the DSNode we we return
 		DSNode root = new DSNode< Object >();
 		//root.board = board; // bad, violates encapsulation
@@ -30,9 +44,20 @@ abstract class TurnTakingGame{
 		Object[] ch = getChildren(board);
 		// System.out.println(ch.length);
 		for(int i = 0; i < ch.length; i++){
-			DSNode childNode = buildTree(ch[i]);
+			if(depth == 0)
+				break;
+			DSNode childNode = buildTree(ch[i], depth-1);
 			root.addChild(childNode);
 		}
+		
+		// Save this work in case we see this board again.
+		if(depth != 0)
+			treeMap.put(boardString, root);
+		else
+			root.setWinner(0); // Calling the node a tie until further notice.
+							   // It won't get remembered as 0 in the hashmap.
+							   // The heuristic is essentially "Forget about wins
+							   // that would take more than depth moves."
 		return root;
 	}
 
