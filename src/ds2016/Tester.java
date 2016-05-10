@@ -18,8 +18,8 @@ class Tester{
 		//System.out.println("# game nodes is " + t.buildTree(t.getBoard()).numNodes());
 		//TicTacToeGUI2 t = new TicTacToeGUI2();
 		//TicTacToe t = new TicTacToe();
-		t.drawBoard();
-
+		t.playGame();
+		/**
 		FileReader f = new FileReader("/usr/share/dict/words");
 		BufferedReader reader = new BufferedReader(f);
 		String line;
@@ -33,6 +33,6 @@ class Tester{
 			
 		}
 		System.out.println("wordList has " + wordList.getSize() + " items");
-
+		*/
 	}
 }

@@ -1,5 +1,5 @@
 /**
- * Tic Tac Toe game. Inteded to be two-player
+ * Tic Tac Toe game. Intended to be two-player
  */
 
 package ds2016;
