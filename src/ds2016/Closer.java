@@ -227,28 +227,7 @@ public class Closer
                         System.out.print(board[i]);
                   }
                   System.out.print(" " + upperBound);
-                  
-                  System.out.println();                 
-                  System.out.println("\nNumbers already used: ");
-                  if(usedNumbers.size() > 10)
-                  {
-                     for(int i = 0; i<usedNumbers.size(); i++)
-                     {
-                        if(i % 10 == 0)
-                        {
-                           System.out.println();
-                           System.out.print(usedNumbers.get(i) + " ");
-                        }
-                        else
-                           System.out.println(usedNumbers.get(i) + " ");
-                     }
-                  }
-                  else
-                     for(int i = 0; i < usedNumbers.size(); i++)
-                     {
-                        System.out.print(usedNumbers.get(i) + " ");
-                     }
-                  
+                                    
                   board[usedNumbers.get(index) - 1] = '-';
                   index++;
                   board[usedNumbers.get(index) - 1] = '-';
