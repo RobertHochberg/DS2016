@@ -1,13 +1,5 @@
 /**
  * rowLocation moves up/down; colLocation moves left/right
- * 
- * works if I shove 1 and 2 right into 1,1 but not if I set them to a variable and cast
- * if I do the second, computer does not play to win
- * 
- * todo
- * 	add possibility of even grid and non-square grid; non-square would require another field
- *
- * http://unicode-table.com/en/sets/arrows-symbols/
  */
 
 package src.ds2016;
@@ -60,6 +52,8 @@ class LineTrap extends AlternatingGame{
 				} else board[row][col] = EMPTYSPACE;
 			}
 		}
+		// works if I shove 1 and 2 right into 1,1 but not if I set them to a variable and cast
+		// if I do the second, computer does not play to win
 		board[1][1] = 1;
 
 		//places the marker in the center of the board
@@ -411,6 +405,7 @@ class LineTrap extends AlternatingGame{
 	}
 
 	@Override
+	//necessary to get more mileage out of hash map
 	String toString(Object board) {
 		String boardAsString = "";
 		char[][] b = (char[][]) board;
@@ -444,31 +439,65 @@ class LineTrap extends AlternatingGame{
 	}
 
 	@Override
-	int evaluateHeuristic(DSNode board) {
-		char[][] localBoard = (char[][])getBoard();
-		int whoseTurn = whoseTurn(board.getBoard());
+	int evaluateHeuristic(Object board) {
+		char[][] b = (char[][])(((DSNode)board).getBoard());
+		int lRL = 0;
+		int lCL = 0;
+
+		markerfinder:
+			for(int row = 0; row < boardSize; row++){
+				for(int col = 0; col < boardSize; col++){
+					if (b[row][col] == MARKER) {
+						lRL = row;
+						lCL = col;
+						break markerfinder;
+					} else if (b[row][col] != MARKER) {
+						continue;
+					}
+				}
+			}
+
 		int boardScore = 0;
-		if (rowLocation == 0 && colLocation == 0) {
-			//upper left corner
-			if (localBoard[rowLocation + 1][colLocation] == DOWNLINE && localBoard[rowLocation][colLocation + 1] == RIGHTLINE) {
 
-			}
-		} else if (rowLocation == 0 && colLocation == 2*numGridPoints-2) {
-			//upper right corner
-			if (localBoard[rowLocation + 1][colLocation] == DOWNLINE && localBoard[rowLocation][colLocation - 1] == LEFTLINE) {
-
-			}
-		} else if (rowLocation == 2*numGridPoints-2 && colLocation == 0) {
-			//lower left corner
-			if (localBoard[rowLocation - 1][colLocation] == UPLINE && localBoard[rowLocation][colLocation + 1] == RIGHTLINE) {
-
-			}
-		} else if (rowLocation == 2*numGridPoints-2 && colLocation == 2*numGridPoints-2) {
-			//lower right corner
-			if (localBoard[rowLocation - 1][colLocation] == UPLINE && localBoard[rowLocation][colLocation - 1] == LEFTLINE) {
-
+		int spacesFilled = 0;
+		if (lRL != 0 && lCL != 0) {
+			if (lRL != boardSize - 1 && lCL != boardSize - 1) {
+				if (b[lRL - 1][lCL] != EMPTYSPACE) {
+					spacesFilled = spacesFilled + 1;
+				} else if (b[lRL + 1][lCL] != EMPTYSPACE) {
+					spacesFilled = spacesFilled + 1;
+				} else if (b[lRL][lCL - 1] != EMPTYSPACE) {
+					spacesFilled = spacesFilled + 1;
+				} else if (b[lRL][lCL + 1] != EMPTYSPACE) {
+					spacesFilled = spacesFilled + 1;
+				}
 			}
 		}
+
+		if (b[1][1] == 1) {
+			if (spacesFilled == 4) {
+				boardScore = 1000;
+			} else if (spacesFilled == 3) {
+				boardScore = 75;
+			} else if (spacesFilled == 2) {
+				boardScore = 50;
+			} else boardScore = 25;
+		} else {
+			if (spacesFilled == 4) {
+				boardScore = -1000;
+			} else if (spacesFilled == 3) {
+				boardScore = -75;
+			} else if (spacesFilled == 2) {
+				boardScore = -50;
+			} else boardScore = -25;
+		}
+
+		/**
+		if (b[1][1] == 1)
+			boardScore = (int)Math.floor(100*Math.random());
+		else boardScore = 0 - (int)Math.floor(100*Math.random());
+		 */
+
 		return boardScore;
 	}
 }

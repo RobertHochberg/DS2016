@@ -46,9 +46,13 @@ abstract class AlternatingGame extends TurnTakingGame {
 
 		// Assume for now 2 players
 		int winner = 3 - whoseTurn;
+
 		for(int i = 0; i < children.length; i++){
-			DSNode childTree = buildTree(children[i], 15); // value of depth is set her
-			int childVal = evaluateTree(childTree);  // Recursive call
+			int childVal = 0;
+			DSNode childTree = buildTree(children[i], 7); // value of depth is set here
+			if (getNumGridPoints() <= 5) {
+				childVal = evaluateTree(childTree);  // Recursive call
+			} else childVal = heuristicEvaluateTree(childTree);
 			if(whoseTurn == 1){
 				if(winner == 2 && childVal != 2){
 					winner = childVal;
@@ -100,4 +104,5 @@ abstract class AlternatingGame extends TurnTakingGame {
 	abstract void getHumanMove();
 	abstract void getComputerMove();
 	abstract int  whoWon();
+	abstract int getNumGridPoints();
 }
