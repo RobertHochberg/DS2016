@@ -12,6 +12,7 @@ package ds2016;
 
 class DSNode< E >{
 	// The winner of the tree that has this node as root
+	// winner is used for a different functionality in the case of Connect Four
 	private int winner;	// 0 = tie, 1, 2, 3, ... = the wining player		
 	private E   board;
 	private DSArrayList<DSNode> children = new DSArrayList<DSNode>();
