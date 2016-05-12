@@ -16,6 +16,18 @@
 		// Maps words to their frequency
 		HashMap<String, Integer> wordCount;
 		
+		public static void main(String[] args){
+			BookReader br = new BookReader();
+			br.readABook("/Users/wpa/Dropbox/Skewl/DiscreteStructures/workspace/mobydick.txt");
+			br.printFrequencies();
+		}
+		
+//		public String frqWord(){
+//			String fw;
+//			for()
+//			return fw;
+//		}
+//		
 		public void readABook(String book){
 			System.out.println("** Reading Book File");
 			wordCount = new HashMap<String, Integer>();

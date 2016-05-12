@@ -64,7 +64,6 @@ class DSNode<E> {
 		}
 
 		return rv;
-<<<<<<< HEAD
 	}
 
 	public int numNodes() {
@@ -83,8 +82,5 @@ class DSNode<E> {
 		return rv;
 
 	}
-=======
-	} 
 
->>>>>>> master
 }

@@ -12,16 +12,12 @@ import java.io.IOException;
 class Tester{
 
 	public static void main(String args[]) throws IOException{
-<<<<<<< HEAD
 
 		arrayTest();
 
 //		Nim t = new Nim();
 //		System.out.println("# game plays is " + t.buildTree(t.getBoard()).numLeaves());
-=======
-		Nim t = new Nim(5,5,5);
-		System.out.println("# game plays is " + t.buildTree(t.getBoard()).numLeaves());
->>>>>>> master
+
 		//TicTacToeGUI2 t = new TicTacToeGUI2();
 		//TicTacToe t = new TicTacToe();
 //		t.playGame();
@@ -29,12 +25,7 @@ class Tester{
 		FileReader f = new FileReader("/usr/share/dict/words");
 		BufferedReader reader = new BufferedReader(f);
 		String line;
-<<<<<<< HEAD
 
-
-=======
-		
->>>>>>> master
 		DSArrayList <String> wordList = new DSArrayList<String>();
 		while ((line = reader.readLine()) != null) {
 			line = line.replaceAll("[\\?,~<01234567890()':;.!_-]", "");	
@@ -46,7 +37,7 @@ class Tester{
 		System.out.println("wordList has " + wordList.getSize() + " items");
 
 	}
-<<<<<<< HEAD
+
 
 	
 	public static void arrayTest(){
@@ -67,6 +58,5 @@ class Tester{
 		System.out.println("");
 		
 	}
-=======
->>>>>>> master
+
 }
