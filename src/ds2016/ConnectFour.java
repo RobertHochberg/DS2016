@@ -174,7 +174,7 @@ public class ConnectFour extends AlternatingGame {
 			//Assume for 2 players
 		int winner = 3 - whoseTurn;
 		int x = 0; //x is the array position of the current "winning" tree
-		int y = 4; //y is the depth for buildTree
+		int y = 5; //y is the depth for buildTree
 		if(whoWon(board) == 0){
 		for(int i = 0; i < children.length; i++){
 			DSNode childTree = buildTree(children[i], y);
@@ -319,7 +319,7 @@ public class ConnectFour extends AlternatingGame {
 	 * @return
 	 */
 	int whoWon(char[][] localBoard){
-		for(int i=0; i < 6; i++){ 
+		for(int i=0; i < 7; i++){ 
 			for(int j=0; j < 6; j++){
 				if(j < 2){
 					if(localBoard[i][j] == localBoard[i][j + 1] &&localBoard[i][j + 1] == localBoard[i][j + 2] && localBoard[i][j + 2] == localBoard[i][j + 3])
@@ -566,7 +566,7 @@ public class ConnectFour extends AlternatingGame {
 	 */
 	int evaluateThreeWinState(char[][] localBoard){
 		int x = 0;
-		for(int i=0; i < 6; i++){
+		for(int i=0; i < 7; i++){
 			for(int j=0; j < 6; j++){
 				//if (localBoard[1][5] == localBoard[2][5] && localBoard[2][5] == localBoard[3][5] && localBoard[4][5] == '4'){
 					//x = x + 116;
@@ -736,7 +736,7 @@ public class ConnectFour extends AlternatingGame {
 	 */
 	int evaluateTwoWinState(char[][] localBoard){
 		int x = 0;
-		for(int i=0; i < 6; i++){
+		for(int i=0; i < 7; i++){
 			for(int j=0; j < 6; j++){
 				if(j < 4){
 					if(localBoard[i][j] == localBoard[i][j + 1] && localBoard[i][j + 2] == (char)i)
