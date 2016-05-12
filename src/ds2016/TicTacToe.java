@@ -232,7 +232,6 @@ class TicTacToe extends AlternatingGame {
 	public Object[] getChildren(Object aB){
 		char[] aBoard = (char[])aB;
 		//printBoard(aBoard);
-
 		// Build the children
 		int numChildren = getNumChildren(aB);
 		Object[] rv = new Object[numChildren];

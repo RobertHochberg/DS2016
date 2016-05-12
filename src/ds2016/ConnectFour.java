@@ -89,24 +89,24 @@ public class ConnectFour extends AlternatingGame {
 		}
 		
 		if(isArrayFull(theArray) == false && whoWon(board) == 0){
-		for(int i = 0; i <= 5; i++){
+		for(int i = 1; i <= 5; i++){
 			if(theArray[i] == playerOneCharacter){
 				if (whoseTurn(board) == 1){
-					theArray[i] = playerOneCharacter;
+					theArray[i - 1] = playerOneCharacter;
 					break;
 				}
 				else{
-					theArray[i] = playerTwoCharacter;
+					theArray[i - 1] = playerTwoCharacter;
 					break;
 				}
 			}
 			else if(theArray[i] == playerTwoCharacter){
 				if (whoseTurn(board) == 1){
-					theArray[i ] = playerOneCharacter;
+					theArray[i - 1] = playerOneCharacter;
 					break;
 				}
 				else{
-					theArray[i] = playerTwoCharacter;
+					theArray[i - 1] = playerTwoCharacter;
 					break;
 				}
 			}
@@ -142,11 +142,11 @@ public class ConnectFour extends AlternatingGame {
 	 */
 	
 	DSNode buildTree(Object board, int depth){
+		char[][] localBoard = (char[][]) board;
 		// root is the DSNode we we return
 		DSNode root = new DSNode< Object >();
 		//root.board = board; // bad, violates encapsulation
-		root.setBoard(board); // good
-
+		root.setBoard(localBoard); // good
 		// We get all boards obtainable from this board in 1 move
 		Object[] ch = getChildren(board);
 		// System.out.println(ch.length);
@@ -168,14 +168,16 @@ public class ConnectFour extends AlternatingGame {
 	void getComputerMove() {
 		Object board = getBoard();
 		Object[] children = getChildren(board);
+		
+		if(whoWon(board) == 0){
 		Object newBoard = children[0];
 			//Assume for 2 players
 		int winner = 3 - whoseTurn;
 		int x = 0; //x is the array position of the current "winning" tree
-		int y = 6; //y is the depth for buildTree
+		int y = 4; //y is the depth for buildTree
 		for(int i = 0; i < children.length; i++){
 			DSNode childTree = buildTree(children[i], y);
-			DSNode challengeTree = buildTree(children[x], y);
+			DSNode challengeTree = buildTree(newBoard, y);
 			int challengeVal = evaluateTree(challengeTree);
 			int childVal = evaluateTree(childTree);  // Recursive call
 			if(whoseTurn == 1){
@@ -190,12 +192,16 @@ public class ConnectFour extends AlternatingGame {
 			}
 		}
 		if(winner != 0 && winner > 0)
-			System.out.println("Player " + 2 + " has the win!");
+			System.out.println("Player " + 2 + " has the lead!");
 		else if(winner != 0 && winner < 0)
-			System.out.println("Player " + 1 + " has the win!");
+			System.out.println("Player " + 1 + " has the lead!");
 		
 		setBoard(newBoard);
 		whoseTurn = 3 - whoseTurn;
+		drawBoard();
+		}
+		else
+			System.out.println("Player " + whoWon(board) + " has won!"); 
 	}
 	
 	/**
@@ -284,7 +290,6 @@ public class ConnectFour extends AlternatingGame {
 				totalMoves += 1;
 			}	
 		}
-		System.out.println(totalMoves);
 		if (totalMoves == 0){
 			return 1;
 		}
@@ -427,12 +432,11 @@ public class ConnectFour extends AlternatingGame {
 		}
 	}
 	
-	@Override
 	public Object[] getChildren(Object aB){
-		char[][] aBoard = (char[][])aB;
+		char[][] aBoard = (char[][]) aB;
 		//printBoard(aBoard);
 		// Build the children
-		int numChildren = getNumChildren(aB);
+		int numChildren = getNumChildren(aBoard);
 		Object[] rv = new Object[numChildren];
 		if(numChildren == 0)
 			return rv;
@@ -449,8 +453,7 @@ public class ConnectFour extends AlternatingGame {
 		// Find the blank spaces and make children for them
 		int childIndex = 0;
 		for(int i = 0; i<= 6; i++){
-			for(int j = 0; j < 6; j ++){
-			 if(aBoard[i][j] == playerOneCharacter && aBoard[i][j - 1] == i){
+			 if(isArrayFull(aBoard[i]) == false){
 				 char[][] childBoard = new char[7][6]; // build the child array
 
 					// copy the parent into the child board
@@ -460,34 +463,31 @@ public class ConnectFour extends AlternatingGame {
 							}
 						}
 
+
 					// put the new player's char on the board
-					childBoard[i][j - 1] = playerChar;
-
-					rv[childIndex] = childBoard;
-					childIndex++;
-			 }
-			 if(aBoard[i][j] == playerTwoCharacter && aBoard[i][j - 1] == i){
-				 char[][] childBoard = new char[7][6]; // build the child array
-
-					// copy the parent into the child board
-				       for(int k = 0; k < 7; k++){
-						for(int l = 0; l < 6; l++){
-							childBoard[k][l] = aBoard[k][l];
+						for(int j = 0; j < 6; j++){
+							if (childBoard[i][j] == playerOneCharacter){
+								childBoard[i][j - 1] = playerChar;
+								break;
+							}
+							else if (childBoard[i][j] == playerTwoCharacter){
+								childBoard[i][j - 1] = playerChar;
+								break;
+							}
+							else if(j == 5){
+								childBoard[i][5] = playerChar;
+								break;
+							}
 						}
-					}
-
-					// put the new player's char on the board
-					childBoard[i][j - 1] = playerChar;
-
+						
 					rv[childIndex] = childBoard;
 					childIndex++;
 			 }
 			}
-			
+		return rv;
 			
 		}
-		return rv;
-	}
+		
 	
 	/** 
 	 * Same Precondition as in turn taking game
@@ -520,6 +520,7 @@ public class ConnectFour extends AlternatingGame {
 				}
 				 // end of looping over children
 				root.setWinner(winner);
+				//System.out.println(winner);
 				return winner;
 	}
 	
@@ -549,6 +550,7 @@ public class ConnectFour extends AlternatingGame {
 		else{
 			y = evaluateThreeWinState(localBoard) + evaluateTwoWinState(localBoard);
 		}
+		System.out.println(y);
 		return y; 
 	}
 	/**
@@ -605,7 +607,7 @@ public class ConnectFour extends AlternatingGame {
 							x = x + 50;
 						}
 					}
-					else if(localBoard[i][j] == localBoard[i + 1][j] &&localBoard[i + 1][j] == localBoard[i + 2][j] && localBoard[i - 1][j] == i - 1)
+					else if(i > 0 && localBoard[i][j] == localBoard[i + 1][j] &&localBoard[i + 1][j] == localBoard[i + 2][j] && localBoard[i - 1][j] == i - 1)
 					{
 						if(localBoard[i][j] == playerOneCharacter){
 							x = x - 50;
@@ -639,7 +641,9 @@ public class ConnectFour extends AlternatingGame {
 							x = x + 50;
 						}
 					}
-					else if(localBoard[i][j] == localBoard[i + 1][j - 1] &&localBoard[i + 1][j - 1] == localBoard[i + 2][j - 2] && localBoard[i - 1][j + 1] == i - 1)
+					else if(i > 0 && j < 5 && localBoard[i][j] == localBoard[i + 1][j - 1] &&
+							localBoard[i + 1][j - 1] == localBoard[i + 2][j - 2] && 
+							localBoard[i - 1][j + 1] == i - 1)
 					{
 						if(localBoard[i][j] == playerOneCharacter){
 							x = x - 50;
@@ -664,7 +668,7 @@ public class ConnectFour extends AlternatingGame {
 		for(int i =0 ; i < 7; i++){
 			for(int j= 0; j < 6; j++){
 				if(i < 4 && j < 3){
-					if(localBoard[i][j] == localBoard[i + 1][j + 1] &&localBoard[i + 1][j + 1] == localBoard[i + 2][j + 2] && localBoard[i - 1][j - 1] == i - 1)
+					if(i < 0 && j < 0 && localBoard[i][j] == localBoard[i + 1][j + 1] &&localBoard[i + 1][j + 1] == localBoard[i + 2][j + 2] && localBoard[i - 1][j - 1] == i - 1)
 					{
 						if(localBoard[i][j] == playerOneCharacter){
 							x = x - 50;
@@ -755,7 +759,7 @@ public class ConnectFour extends AlternatingGame {
 							x = x + 10;
 						}
 					}
-					else if(localBoard[i][j] == localBoard[i + 1][j] && localBoard[i - 1][j] == i - 1)
+					else if(i > 0 && localBoard[i][j] == localBoard[i + 1][j] && localBoard[i - 1][j] == i - 1)
 					{
 						if(localBoard[i][j] == playerOneCharacter){
 							x = x - 10;
@@ -789,7 +793,10 @@ public class ConnectFour extends AlternatingGame {
 							x = x + 10;
 						}
 					}
-					else if(localBoard[i][j] == localBoard[i + 1][j - 1] && localBoard[i - 1][j + 1] == i - 1)
+					else if(j < 5 && 
+							i > 0 && 
+							localBoard[i][j] == localBoard[i + 1][j - 1] && 
+							localBoard[i - 1][j + 1] == i - 1)
 					{
 						if(localBoard[i][j] == playerOneCharacter){
 							x = x - 10;
@@ -814,7 +821,7 @@ public class ConnectFour extends AlternatingGame {
 		for(int i =0 ; i < 7; i++){
 			for(int j= 0; j < 6; j++){
 				if(i < 5 && j < 4){
-					if(localBoard[i][j] == localBoard[i + 1][j + 1] && localBoard[i - 1][j - 1] == i - 1)
+					if(i > 0 && localBoard[i][j] == localBoard[i + 1][j + 1] && localBoard[i - 1][j - 1] == i - 1)
 					{
 						if(localBoard[i][j] == playerOneCharacter){
 							x = x - 10;
@@ -885,7 +892,7 @@ public class ConnectFour extends AlternatingGame {
 			char[][] board = new char[7][6];
 			for(int i =0; i < 7; i++){
 				for(int j = 0; j < 6; j++){
-					board[i][j] = localBoard[i][j];
+					board[i][j] = (char)localBoard[i][j];
 				}
 			}
 			boolean full = true;
