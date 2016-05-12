@@ -508,19 +508,21 @@ public class ConnectFour extends AlternatingGame {
 				for(int i = 0; i < root.getNumChildren(); i++){
 					evaluateTree((DSNode)(root.getChildren().get(i)));  // Recursive call
 				if(whoseTurn((char[][]) root.getBoard()) == 1){
-					if(((DSNode)(root.getChildren().get(i))).getWinner() > evaluateBoard((char[][]) root.getBoard())){
-						((DSNode)(root.getChildren().get(i))).setWinner(evaluateBoard((char[][]) root.getBoard()));
+					if(((DSNode)(root.getChildren().get(i))).getWinner() < root.getWinner()){
+						((DSNode)(root.getChildren().get(i))).setWinner(((DSNode)(root.getChildren().get(i))).getWinner());
+						winner = ((DSNode)(root.getChildren().get(i))).getWinner();
 					}
 				  }
 				else if(whoseTurn((char[][]) root.getBoard()) == 2){
-					if(((DSNode)(root.getChildren().get(i))).getWinner() < evaluateBoard((char[][]) root.getBoard())){
-						((DSNode)(root.getChildren().get(i))).setWinner(evaluateBoard((char[][]) root.getBoard()));
+					if(((DSNode)(root.getChildren().get(i))).getWinner() > root.getWinner()){
+						((DSNode)(root.getChildren().get(i))).setWinner(((DSNode)(root.getChildren().get(i))).getWinner());
+						winner = ((DSNode)(root.getChildren().get(i))).getWinner();
 					}
 				  }
 				}
 				 // end of looping over children
 				root.setWinner(winner);
-				//System.out.println(winner);
+				System.out.println(winner);
 				return winner;
 	}
 	
@@ -550,7 +552,6 @@ public class ConnectFour extends AlternatingGame {
 		else{
 			y = evaluateThreeWinState(localBoard) + evaluateTwoWinState(localBoard);
 		}
-		System.out.println(y);
 		return y; 
 	}
 	/**
@@ -563,8 +564,12 @@ public class ConnectFour extends AlternatingGame {
 		int x = 0;
 		for(int i=0; i < 6; i++){
 			for(int j=0; j < 6; j++){
+				if (localBoard[1][5] == localBoard[2][5] && localBoard[2][5] == localBoard[3][5] && localBoard[4][5] == '4'){
+					x = x + 116;
+					return x;
+				}
 				if(j < 3){
-					if(localBoard[i][j] == localBoard[i][j + 1] &&localBoard[i][j + 1] == localBoard[i][j + 2] && localBoard[i][j + 3] == i)
+					if(localBoard[i][j] == localBoard[i][j + 1] &&localBoard[i][j + 1] == localBoard[i][j + 2] && localBoard[i][j + 3] == (char) (i))
 					{
 						if(localBoard[i][j] == playerOneCharacter){
 							x = x - 50;
@@ -573,7 +578,7 @@ public class ConnectFour extends AlternatingGame {
 							x = x + 50;
 						}
 					}
-					else if(j > 0 && localBoard[i][j] == localBoard[i][j + 1] &&localBoard[i][j + 1] == localBoard[i][j + 2] && localBoard[i][j - 1] == i)
+					else if(j > 0 && localBoard[i][j] == localBoard[i][j + 1] &&localBoard[i][j + 1] == localBoard[i][j + 2] && localBoard[i][j - 1] == (char) (i))
 					{
 						if(localBoard[i][j] == playerOneCharacter){
 							x = x - 50;
@@ -584,7 +589,7 @@ public class ConnectFour extends AlternatingGame {
 					}
 				}
 				else{
-					if(localBoard[i][3] == localBoard[i][4] &&localBoard[i][4] == localBoard[i][5] && localBoard[i][2] == i){
+					if(localBoard[i][3] == localBoard[i][4] &&localBoard[i][4] == localBoard[i][5] && localBoard[i][2] == (char)i){
 						if(localBoard[i][3] == playerOneCharacter){
 							x = x - 50;
 						}
@@ -598,7 +603,7 @@ public class ConnectFour extends AlternatingGame {
 		for(int i =0 ; i < 7; i++){
 			for(int j= 0; j < 6; j++){
 				if(i < 4){
-					if(localBoard[i][j] == localBoard[i + 1][j] &&localBoard[i + 1][j] == localBoard[i + 2][j] && localBoard[i + 3][j] == i + 3)
+					if(localBoard[i][j] == localBoard[i + 1][j] &&localBoard[i + 1][j] == localBoard[i + 2][j] && localBoard[i + 3][j] == (char)(i + 3))
 					{
 						if(localBoard[i][j] == playerOneCharacter){
 							x = x - 50;
@@ -607,7 +612,7 @@ public class ConnectFour extends AlternatingGame {
 							x = x + 50;
 						}
 					}
-					else if(i > 0 && localBoard[i][j] == localBoard[i + 1][j] &&localBoard[i + 1][j] == localBoard[i + 2][j] && localBoard[i - 1][j] == i - 1)
+					else if(i > 0 && localBoard[i][j] == localBoard[i + 1][j] &&localBoard[i + 1][j] == localBoard[i + 2][j] && localBoard[i - 1][j] == (char) (i - 1))
 					{
 						if(localBoard[i][j] == playerOneCharacter){
 							x = x - 50;
@@ -618,7 +623,7 @@ public class ConnectFour extends AlternatingGame {
 					}
 				}
 				else{
-					if(localBoard[4][j] == localBoard[5][j] &&localBoard[5][j] == localBoard[6][j] && localBoard[3][j] == 3){
+					if(localBoard[4][j] == localBoard[5][j] &&localBoard[5][j] == localBoard[6][j] && localBoard[3][j] == '3'){
 						if(localBoard[4][j] == playerOneCharacter){
 							x = x - 50;
 						}
@@ -632,7 +637,7 @@ public class ConnectFour extends AlternatingGame {
 		for(int i =0 ; i < 7; i++){
 			for(int j= 0; j < 6; j++){
 				if(i < 4 && j > 2){
-					if(localBoard[i][j] == localBoard[i + 1][j - 1] &&localBoard[i + 1][j - 1] == localBoard[i + 2][j - 2] && localBoard[i + 3][j - 3] == i + 3)
+					if(localBoard[i][j] == localBoard[i + 1][j - 1] &&localBoard[i + 1][j - 1] == localBoard[i + 2][j - 2] && localBoard[i + 3][j - 3] == (char)(i + 3))
 					{
 						if(localBoard[i][j] == playerOneCharacter){
 							x = x - 50;
@@ -643,7 +648,7 @@ public class ConnectFour extends AlternatingGame {
 					}
 					else if(i > 0 && j < 5 && localBoard[i][j] == localBoard[i + 1][j - 1] &&
 							localBoard[i + 1][j - 1] == localBoard[i + 2][j - 2] && 
-							localBoard[i - 1][j + 1] == i - 1)
+							localBoard[i - 1][j + 1] == (char)(i - 1))
 					{
 						if(localBoard[i][j] == playerOneCharacter){
 							x = x - 50;
@@ -654,7 +659,7 @@ public class ConnectFour extends AlternatingGame {
 					}
 				}
 				else{
-					if(localBoard[4][2] == localBoard[5][1] &&localBoard[5][1] == localBoard[6][0] && localBoard[3][3] == 3){
+					if(localBoard[4][2] == localBoard[5][1] &&localBoard[5][1] == localBoard[6][0] && localBoard[3][3] == '3'){
 						if(localBoard[3][2] == playerOneCharacter){
 							x = x - 50;
 						}
@@ -668,7 +673,7 @@ public class ConnectFour extends AlternatingGame {
 		for(int i =0 ; i < 7; i++){
 			for(int j= 0; j < 6; j++){
 				if(i < 4 && j < 3){
-					if(i < 0 && j < 0 && localBoard[i][j] == localBoard[i + 1][j + 1] &&localBoard[i + 1][j + 1] == localBoard[i + 2][j + 2] && localBoard[i - 1][j - 1] == i - 1)
+					if(i < 0 && j < 0 && localBoard[i][j] == localBoard[i + 1][j + 1] &&localBoard[i + 1][j + 1] == localBoard[i + 2][j + 2] && localBoard[i - 1][j - 1] == (char)(i - 1))
 					{
 						if(localBoard[i][j] == playerOneCharacter){
 							x = x - 50;
@@ -677,7 +682,7 @@ public class ConnectFour extends AlternatingGame {
 							x = x + 50;
 						}
 					}
-					else if(localBoard[i][j] == localBoard[i + 1][j + 1] &&localBoard[i + 1][j + 1] == localBoard[i + 2][j + 2] && localBoard[i + 1][j + 1] == i + 1)
+					else if(localBoard[i][j] == localBoard[i + 1][j + 1] &&localBoard[i + 1][j + 1] == localBoard[i + 2][j + 2] && localBoard[i + 1][j + 1] == (char)(i + 1))
 					{
 						if(localBoard[i][j] == playerOneCharacter){
 							x = x - 50;
@@ -688,7 +693,7 @@ public class ConnectFour extends AlternatingGame {
 					}
 				}
 				else{
-					if(localBoard[4][3] == localBoard[5][4] &&localBoard[5][4] == localBoard[6][5] && localBoard[3][2] == 3){
+					if(localBoard[4][3] == localBoard[5][4] &&localBoard[5][4] == localBoard[6][5] && localBoard[3][2] == '3'){
 						if(localBoard[3][2] == playerOneCharacter){
 							x = x - 50;
 						}
@@ -699,6 +704,7 @@ public class ConnectFour extends AlternatingGame {
 				}
 			}
 		}
+		//System.out.println(x);
 		return x;
 	}
 	
@@ -716,7 +722,7 @@ public class ConnectFour extends AlternatingGame {
 		for(int i=0; i < 6; i++){
 			for(int j=0; j < 6; j++){
 				if(j < 4){
-					if(localBoard[i][j] == localBoard[i][j + 1] && localBoard[i][j + 2] == i)
+					if(localBoard[i][j] == localBoard[i][j + 1] && localBoard[i][j + 2] == (char)i)
 					{
 						if(localBoard[i][j] == playerOneCharacter){
 							x = x - 10;
@@ -725,7 +731,7 @@ public class ConnectFour extends AlternatingGame {
 							x = x + 10;
 						}
 					}
-					else if(j > 0 && localBoard[i][j] == localBoard[i][j + 1] && localBoard[i][j - 1] == i)
+					else if(j > 0 && localBoard[i][j] == localBoard[i][j + 1] && localBoard[i][j - 1] == (char)i)
 					{
 						if(localBoard[i][j] == playerOneCharacter){
 							x = x - 10;
@@ -736,7 +742,7 @@ public class ConnectFour extends AlternatingGame {
 					}
 				}
 				else{
-					if(localBoard[i][4] == localBoard[i][5] && localBoard[i][3] == i){
+					if(localBoard[i][4] == localBoard[i][5] && localBoard[i][3] == (char)i){
 						if(localBoard[i][4] == playerOneCharacter){
 							x = x - 10;
 						}
@@ -750,7 +756,7 @@ public class ConnectFour extends AlternatingGame {
 		for(int i =0 ; i < 7; i++){
 			for(int j= 0; j < 6; j++){
 				if(i < 5){
-					if(localBoard[i][j] == localBoard[i + 1][j] && localBoard[i + 2][j] == i + 2)
+					if(localBoard[i][j] == localBoard[i + 1][j] && localBoard[i + 2][j] == (char)(i + 2))
 					{
 						if(localBoard[i][j] == playerOneCharacter){
 							x = x - 10;
@@ -759,7 +765,7 @@ public class ConnectFour extends AlternatingGame {
 							x = x + 10;
 						}
 					}
-					else if(i > 0 && localBoard[i][j] == localBoard[i + 1][j] && localBoard[i - 1][j] == i - 1)
+					else if(i > 0 && localBoard[i][j] == localBoard[i + 1][j] && localBoard[i - 1][j] == (char)(i - 1))
 					{
 						if(localBoard[i][j] == playerOneCharacter){
 							x = x - 10;
@@ -770,7 +776,7 @@ public class ConnectFour extends AlternatingGame {
 					}
 				}
 				else{
-					if(localBoard[5][j] == localBoard[6][j] && localBoard[4][j] == 4){
+					if(localBoard[5][j] == localBoard[6][j] && localBoard[4][j] == '4'){
 						if(localBoard[4][j] == playerOneCharacter){
 							x = x - 10;
 						}
@@ -784,7 +790,7 @@ public class ConnectFour extends AlternatingGame {
 		for(int i =0 ; i < 7; i++){
 			for(int j= 0; j < 6; j++){
 				if(i < 5 && j > 1){
-					if(localBoard[i][j] == localBoard[i + 1][j - 1] &&localBoard[i + 2][j - 2] == i + 2)
+					if(localBoard[i][j] == localBoard[i + 1][j - 1] &&localBoard[i + 2][j - 2] == (char)(i + 2))
 					{
 						if(localBoard[i][j] == playerOneCharacter){
 							x = x - 10;
@@ -796,7 +802,7 @@ public class ConnectFour extends AlternatingGame {
 					else if(j < 5 && 
 							i > 0 && 
 							localBoard[i][j] == localBoard[i + 1][j - 1] && 
-							localBoard[i - 1][j + 1] == i - 1)
+							localBoard[i - 1][j + 1] == (char)(i - 1))
 					{
 						if(localBoard[i][j] == playerOneCharacter){
 							x = x - 10;
@@ -807,7 +813,7 @@ public class ConnectFour extends AlternatingGame {
 					}
 				}
 				else{
-					if(localBoard[5][1] == localBoard[6][0] && localBoard[3][3] == 3){
+					if(localBoard[5][1] == localBoard[6][0] && localBoard[3][3] == '3'){
 						if(localBoard[5][1] == playerOneCharacter){
 							x = x - 10;
 						}
@@ -821,7 +827,7 @@ public class ConnectFour extends AlternatingGame {
 		for(int i =0 ; i < 7; i++){
 			for(int j= 0; j < 6; j++){
 				if(i < 5 && j < 4){
-					if(i > 0 && localBoard[i][j] == localBoard[i + 1][j + 1] && localBoard[i - 1][j - 1] == i - 1)
+					if(i > 0 && localBoard[i][j] == localBoard[i + 1][j + 1] && localBoard[i - 1][j - 1] == (char)(i - 1))
 					{
 						if(localBoard[i][j] == playerOneCharacter){
 							x = x - 10;
@@ -830,7 +836,7 @@ public class ConnectFour extends AlternatingGame {
 							x = x + 10;
 						}
 					}
-					else if(localBoard[i][j] == localBoard[i + 1][j + 1] &&localBoard[i + 2][j + 2] == i + 2)
+					else if(localBoard[i][j] == localBoard[i + 1][j + 1] &&localBoard[i + 2][j + 2] == (char)(i + 2))
 					{
 						if(localBoard[i][j] == playerOneCharacter){
 							x = x - 10;
@@ -841,7 +847,7 @@ public class ConnectFour extends AlternatingGame {
 					}
 				}
 				else{
-					if(localBoard[5][4] == localBoard[6][5] && localBoard[4][3] == 4){
+					if(localBoard[5][4] == localBoard[6][5] && localBoard[4][3] == '4'){
 						if(localBoard[5][4] == playerOneCharacter){
 							x = x - 10;
 						}
