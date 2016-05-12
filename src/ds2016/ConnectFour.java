@@ -175,6 +175,7 @@ public class ConnectFour extends AlternatingGame {
 		int winner = 3 - whoseTurn;
 		int x = 0; //x is the array position of the current "winning" tree
 		int y = 4; //y is the depth for buildTree
+		if(whoWon(board) == 0){
 		for(int i = 0; i < children.length; i++){
 			DSNode childTree = buildTree(children[i], y);
 			DSNode challengeTree = buildTree(newBoard, y);
@@ -190,6 +191,7 @@ public class ConnectFour extends AlternatingGame {
 				x = i;
 				newBoard = children[x];
 			}
+		}
 		}
 		if(winner != 0 && winner > 0)
 			System.out.println("Player " + 2 + " has the lead!");
@@ -555,6 +557,8 @@ public class ConnectFour extends AlternatingGame {
 		return y; 
 	}
 	/**
+	 * First checks for a three win "priority state"
+	 * A three win priority state occurs when there is three in a row, plus a blank "win" space behind and in front of it
 	 * Evaluates the board for any 3 "danger" states
 	 * Looks for 3 in a row, then a blank space
 	 * @param localBoard
@@ -564,10 +568,10 @@ public class ConnectFour extends AlternatingGame {
 		int x = 0;
 		for(int i=0; i < 6; i++){
 			for(int j=0; j < 6; j++){
-				if (localBoard[1][5] == localBoard[2][5] && localBoard[2][5] == localBoard[3][5] && localBoard[4][5] == '4'){
-					x = x + 116;
-					return x;
-				}
+				//if (localBoard[1][5] == localBoard[2][5] && localBoard[2][5] == localBoard[3][5] && localBoard[4][5] == '4'){
+					//x = x + 116;
+					//return x;
+				//}
 				if(j < 3){
 					if(localBoard[i][j] == localBoard[i][j + 1] &&localBoard[i][j + 1] == localBoard[i][j + 2] && localBoard[i][j + 3] == (char) (i))
 					{
@@ -602,6 +606,19 @@ public class ConnectFour extends AlternatingGame {
 		}
 		for(int i =0 ; i < 7; i++){
 			for(int j= 0; j < 6; j++){
+				if(i < 4 && i > 0){
+					if(localBoard[i][j] == localBoard[i + 1][j] &&localBoard[i + 1][j] == localBoard[i + 2][j] && localBoard[i + 3][j] == (char)(i + 3) && localBoard[i - 1][j] == (char) (i - 1))
+					{
+						if(localBoard[i][j] == playerOneCharacter){
+							x = x - 250;
+							return x;
+						}
+						else if(localBoard[i][j] == playerTwoCharacter){
+							x = x + 250;
+							return x;
+						}
+					}
+				}
 				if(i < 4){
 					if(localBoard[i][j] == localBoard[i + 1][j] &&localBoard[i + 1][j] == localBoard[i + 2][j] && localBoard[i + 3][j] == (char)(i + 3))
 					{
@@ -827,7 +844,7 @@ public class ConnectFour extends AlternatingGame {
 		for(int i =0 ; i < 7; i++){
 			for(int j= 0; j < 6; j++){
 				if(i < 5 && j < 4){
-					if(i > 0 && localBoard[i][j] == localBoard[i + 1][j + 1] && localBoard[i - 1][j - 1] == (char)(i - 1))
+					if(i > 0 && j > 0 &&localBoard[i][j] == localBoard[i + 1][j + 1] && localBoard[i - 1][j - 1] == (char)(i - 1))
 					{
 						if(localBoard[i][j] == playerOneCharacter){
 							x = x - 10;
