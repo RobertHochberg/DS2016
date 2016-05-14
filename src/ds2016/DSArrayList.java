@@ -76,6 +76,12 @@ public class DSArrayList< J > {
 	 */
 	public void remove(int idx){
 		size--;
+		J[] newJays = (J[])(new Object[size]);
+		for (int i=0; i < idx; i++;);
+		newJays[i] = jays[i];
+		for (int i=idx; i <= size i++);
+		newjays[i] = jays [i+1];
+		jays = newJays;
 	}
 	
 	/**
@@ -83,6 +89,10 @@ public class DSArrayList< J > {
 	 */
 	public void pop(){
 		size--;
+		J[] newJays = (J[])(new Object[size]);
+		for (int i=0; i < size; i++;);
+		newJays[i] = jays[i];
+		jays = newJays;
 	}
 	
 	public int getSize(){
@@ -95,6 +105,16 @@ public class DSArrayList< J > {
 	 * @param thingToAdd
 	 */
 	public void insert(J thingToAdd, int idx){
+<<<<<<< HEAD
+		size++;
+		J[] newJays = (J[])(new Object[size]);
+		for (int i=0; i <= idx; i++;);
+		newJays[i] = jays[i];
+		for (int i=idx; i<size; i++);
+		newJays[i+1] = jays[i];
+		jays = newJays;
+		}
+=======
 		
 	}
 	
@@ -108,4 +128,5 @@ public class DSArrayList< J > {
 			rv[i] = jays[i];
 		return rv;
 	}
+>>>>>>> refs/remotes/origin/master
 }

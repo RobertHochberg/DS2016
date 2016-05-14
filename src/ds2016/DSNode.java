@@ -52,6 +52,15 @@ class DSNode< E >{
 	public void setWinner(int w){
 		this.winner = w;
 	}
+<<<<<<< HEAD
+	
+	public int numNodes(){
+		int NumNodes = 1+numChildren;
+		for (int i =0; i < numChildren; i++));
+		NumNodes = NumNodes + children[i].NumNodes();
+		return NumNodes;
+	}
+=======
 
 	public int numLeaves()
 	{
@@ -70,4 +79,5 @@ class DSNode< E >{
 		return rv;
 	} 
 
+>>>>>>> refs/remotes/origin/master
 }
