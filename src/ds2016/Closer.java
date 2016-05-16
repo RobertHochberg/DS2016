@@ -38,12 +38,13 @@ public class Closer
          
          if(round % 2 != 0)
          {                 
+         /*
                   System.out.println("\nNumbers already used: ");
                   if(usedNumbers.size() > 10)
                   {
                      for(int i = 0; i<usedNumbers.size(); i++)
                      {
-                        if(i % 10 == 0)
+                        if(i % 25 == 0)
                         {
                            System.out.println();
                            System.out.print(usedNumbers.get(i) + " ");
@@ -59,8 +60,10 @@ public class Closer
                      }
                
                System.out.println();
+               */
    				System.out.println("\nPlayer 1, take your guess: ");
    				p1guess = keyboard.nextInt();
+               /*
    					while(usedNumbers.contains(p1guess) || 
                   p1guess > upperBound || p1guess < 0)
    					{
@@ -70,7 +73,7 @@ public class Closer
                      if(!usedNumbers.contains(p1guess) || computerGuess == num)
                         break;
    					}
-   					
+   					*/
    				usedNumbers.add(index, p1guess);
                board[p1guess - 1] = playerOneCharacter;
                
@@ -131,13 +134,13 @@ public class Closer
 		                System.out.println("\nComputer wins");
 		                break;
 		            }
-                 
+                 /*
                   System.out.println("\nNumbers already used: ");
                   if(usedNumbers.size() > 10)
                   {
                      for(int i = 0; i<usedNumbers.size(); i++)
                      {
-                        if(i % 10 == 0)
+                        if(i % 25 == 0)
                         {
                            System.out.println();
                            System.out.print(usedNumbers.get(i) + " ");
@@ -152,6 +155,7 @@ public class Closer
                         System.out.print(usedNumbers.get(i) + " ");
                      }
                System.out.println();
+               */
    				System.out.println("\nPlayer 1, take your guess: ");
    				p1guess = keyboard.nextInt();
    					while(usedNumbers.contains(p1guess) || 
